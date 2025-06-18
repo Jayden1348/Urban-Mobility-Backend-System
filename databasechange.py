@@ -24,12 +24,11 @@ def create_database():
     # Create tables
     cursor.execute("""
     CREATE TABLE Users (
-        UserID INTEGER PRIMARY KEY AUTOINCREMENT,
-        UserRole INTEGER NOT NULL CHECK(UserRole IN (0, 1, 2)), -- 0 = Super Administrator, 1 = System Administrator, 2 = Service Engineer
-        Username TEXT NOT NULL,
+        Username TEXT NOT NULL PRIMARY KEY,
         Password TEXT NOT NULL,
         FirstName TEXT  ,
-        LastName TEXT,        
+        LastName TEXT,
+        UserRole INTEGER NOT NULL CHECK(UserRole IN (0, 1, 2)), -- 0 = Super Administrator, 1 = System Administrator, 2 = Service Engineer       
         RegistrationDate DATETIME
     );
     """)
@@ -89,29 +88,60 @@ def create_database():
     print("SQLite database and tables created successfully.")
 
 
-def create_user(userrole, username, password, firstname, lastname, registrationdate):
-    if userrole in (1, 2):
-        if not (firstname and lastname and registrationdate):
-            print("System Administrators and Service Engineers must have a first name, last name, and registration date.")
-            return
-    if userrole == 0 and (firstname or lastname or registrationdate):
-        firstname = None
-        lastname = None
-        registrationdate = None
-        print("Super Administrators don't have profile info. Firstname, lastname and registrationdate set to None")
+def dbconnect(query, data):
     db_file = "ScooterApp.db"
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO Users (UserRole, Username, Password, FirstName, LastName, RegistrationDate)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (userrole, username, password, firstname, lastname, registrationdate))
+    cursor.executemany(query, data)
     conn.commit()
     cursor.close()
     conn.close()
-    print(f"User '{username}' created successfully.")
+
+
+def seed_scooters():
+    scooters = [
+        (
+            "Segway", "Ninebot", "SN1001", 25.0, 374.0, 100, 20, 80, 51.92, 4.48, 0, 1200.5, "2024-06-01", "2024-01-15"
+        ),
+        (
+            "Xiaomi", "M365", "SN1002", 25.0, 280.0, 85, 15, 90, 51.93, 4.50, 0, 800.0, "2024-05-20", "2024-02-10"
+        ),
+        (
+            "NIU", "KQi3", "SN1003", 32.0, 460.0, 60, 10, 95, 51.95, 4.60, 1, 1500.0, "2024-04-10", "2024-03-01"
+        ),
+    ]
+    query = """
+        INSERT INTO Scooters (
+            Brand, Model, SerialNumber, TopSpeed, BatteryCapacity, StateOfCharge,
+            TargetRangeSoCMin, TargetRangeSoCMax, Latitude, Longitude, OutOfService,
+            Mileage, LastMaintenanceDate, InServiceDate
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    dbconnect(query, scooters)
+    print("Scooters table seeded successfully.")
+
+
+def seed_users():
+    users = [
+        # Super Admins (role 0)
+        (0, "superadmin1", "SuperPass1!", None, None, None),
+        (0, "superadmin2", "SuperPass2!", None, None, None),
+        # System Admins (role 1)
+        (1, "sysadmin1", "SysPass1!", "Alice", "Smith", "2024-06-01"),
+        (1, "sysadmin2", "SysPass2!", "Bob", "Johnson", "2024-06-02"),
+        # Service Engineers (role 2)
+        (2, "engineer1", "EngPass1!", "Charlie", "Brown", "2024-06-03"),
+        (2, "engineer2", "EngPass2!", "Dana", "White", "2024-06-04"),
+    ]
+    query = """
+        INSERT INTO Users (UserRole, Username, Password, FirstName, LastName, RegistrationDate)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """
+    dbconnect(query, users)
+    print("Users table seeded successfully.")
 
 
 if __name__ == "__main__":
     create_database()
-    create_user(0, "super_admin", "Admin_123?", None, None, None)
+    seed_users()
+    seed_scooters()
