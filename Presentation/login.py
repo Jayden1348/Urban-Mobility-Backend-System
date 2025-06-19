@@ -1,5 +1,5 @@
 from .generaltools import *
-from Logic import loginlogic
+from Logic import account_logic
 from .menus import *
 
 
@@ -15,7 +15,7 @@ def start():
         if choice in ("1", "l"):
             username = input("Username: ")
             password = input("Password: ")
-            user = loginlogic.validate_login(username, password)
+            user = account_logic.validate_password(username, password)
             if user:
                 clear_screen()
                 print(f"\nCorrect Login\nWelcome {username}!\n")

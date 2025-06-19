@@ -173,8 +173,7 @@ def account_functions(user):  # Accessible by SystemAdmin & Service Engineer
         if choice == "1":
             account_presentation.update_username(user)
         elif choice == "2":
-            pass
-            # Update password
+            account_presentation.update_password(user)
         elif choice == "3":
             pass
             # Update profile (Last name / first name / registration date)
