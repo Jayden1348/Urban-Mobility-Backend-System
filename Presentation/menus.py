@@ -17,7 +17,7 @@ def super_admin_menu(user):
         clear_screen()
 
         if choice == "1":
-            scooter_functions()
+            scooter_functions(user)
 
         elif choice == "2":
             traveller_functions()
