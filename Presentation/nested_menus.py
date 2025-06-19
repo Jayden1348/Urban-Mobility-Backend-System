@@ -1,8 +1,10 @@
 from .generaltools import *
+from . import account_presentation
 
 
 def scooter_functions():  # Accessible by SuperAdmin & SystemAdmin
     while True:
+        clear_screen()
         print("Scooter related functions:\n")
         print("1. Search scooter info")
         print("2. Update scooter info")
@@ -29,11 +31,11 @@ def scooter_functions():  # Accessible by SuperAdmin & SystemAdmin
         else:
             print("\nInvalid option. Please try again.")
             wait(2)
-            clear_screen()
 
 
 def traveller_functions():  # Accessible by SuperAdmin & SystemAdmin
     while True:
+        clear_screen()
         print("Traveller related functions:\n")
         print("1. Search traveller info")
         print("2. Update traveller info")
@@ -60,11 +62,11 @@ def traveller_functions():  # Accessible by SuperAdmin & SystemAdmin
         else:
             print("\nInvalid option. Please try again.")
             wait(2)
-            clear_screen()
 
 
 def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
     while True:
+        clear_screen()
         print("Service engineer related functions:\n")
         print("1. Update service engineer info")
         print("2. Add service engineer")
@@ -86,12 +88,11 @@ def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
             return
         else:
             print("\nInvalid option. Please try again.")
-            wait(2)
-            clear_screen()
 
 
 def system_admin_functions():  # Accessible only by SuperAdmin
     while True:
+        clear_screen()
         print("System admin related functions:\n")
         print("1. Update system admin info")
         print("2. Add system admin")
@@ -113,14 +114,13 @@ def system_admin_functions():  # Accessible only by SuperAdmin
             return
         else:
             print("\nInvalid option. Please try again.")
-            wait(2)
-            clear_screen()
 
 
 # Accessible by SuperAdmin & SystemAdmin, but some functions are accessible only by SuperAdmin
 def backend_system_functions(user):
     role = user.user_role
     while True:
+        clear_screen()
         print("Backend System related functions:\n")
         print("1. Make backup")
         print("2. Restore backup")
@@ -156,11 +156,11 @@ def backend_system_functions(user):
         else:
             print("\nInvalid option. Please try again.")
             wait(2)
-            clear_screen()
 
 
 def account_functions(user):  # Accessible by SystemAdmin & Service Engineer
     while True:
+        clear_screen()
         print("Account functions:\n")
         print("1. Update username")
         print("2. Update password")
@@ -171,8 +171,7 @@ def account_functions(user):  # Accessible by SystemAdmin & Service Engineer
         clear_screen()
 
         if choice == "1":
-            pass
-            # Update username
+            account_presentation.update_username(user)
         elif choice == "2":
             pass
             # Update password
@@ -187,4 +186,3 @@ def account_functions(user):  # Accessible by SystemAdmin & Service Engineer
         else:
             print("\nInvalid option. Please try again.")
             wait(2)
-            clear_screen()

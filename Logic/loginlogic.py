@@ -1,8 +1,8 @@
-from Access.DataAccess import get_all_from_table
+from Access import DataAccess
 
 
 def validate_login(username, password):
-    users = get_all_from_table("Users")
+    users = DataAccess.get_all_from_table("Users")
     for user in users:
         if user.username == username:
             if user.password == password:

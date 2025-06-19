@@ -1,1 +1,1 @@
-from Access.DataAccess import get_all_from_table
+from Access import DataAccess
