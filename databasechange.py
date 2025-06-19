@@ -124,8 +124,7 @@ def seed_scooters():
 def seed_users():
     users = [
         # Super Admins (role 0)
-        (0, "superadmin1", "SuperPass1!", None, None, None),
-        (0, "superadmin2", "SuperPass2!", None, None, None),
+        (0, "super_admin", "Admin_123?", None, None, None),
         # System Admins (role 1)
         (1, "sysadmin1", "SysPass1!", "Alice", "Smith", "2024-06-01"),
         (1, "sysadmin2", "SysPass2!", "Bob", "Johnson", "2024-06-02"),
