@@ -1,8 +1,9 @@
 from .generaltools import *
 from .nested_menus import *
+from . import logs_presentation, users_presentation
 
 
-def super_admin_menu(user):
+def super_admin_menu(user):  # DONE
     while True:
         print("Main Menu (Super Admin)\n")
         print("1. Scooter related functions")
@@ -32,11 +33,11 @@ def super_admin_menu(user):
             backend_system_functions(user)
 
         elif choice == "6":
-            pass
-            # See Logs
+            logs_presentation.show_all_logs()
+
         elif choice == "7":
-            pass
-            # See Users & roles
+            users_presentation.show_all_users()
+
         elif choice == "8" or choice == "b":
             if areyousure("log out"):
                 return
@@ -46,7 +47,7 @@ def super_admin_menu(user):
             clear_screen()
 
 
-def system_admin_menu(user):
+def system_admin_menu(user):  # DONE
     while True:
         print("Main Menu (System Admin)\n")
         print("1. Scooter related functions")
@@ -73,11 +74,10 @@ def system_admin_menu(user):
             backend_system_functions(user)
 
         elif choice == "5":
-            pass
-            # See Logs
+            logs_presentation.show_all_logs()
         elif choice == "6":
-            pass
-            # See Users & roles
+            users_presentation.show_all_users()
+
         elif choice == "7":
             account_functions(user)
 
