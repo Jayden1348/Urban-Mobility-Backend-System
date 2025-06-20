@@ -20,7 +20,7 @@ def super_admin_menu(user):
             scooter_functions(user)
 
         elif choice == "2":
-            traveller_functions()
+            traveller_functions(user)
 
         elif choice == "3":
             service_engineer_functions()
@@ -64,7 +64,7 @@ def system_admin_menu(user):
             scooter_functions()
 
         elif choice == "2":
-            traveller_functions()
+            traveller_functions(user)
 
         elif choice == "3":
             service_engineer_functions()
