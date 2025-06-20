@@ -2,14 +2,24 @@ from Access import DataAccess
 import re
 import random
 import string
+import bcrypt
 
+from Logic.encryption import hash_username
 
 def validate_password(username, password):
-    user = DataAccess.get_one_from_table("Users", username)
-    if user is not None:
-        if user.password == password:
-            return user
+    # Hash the username before querying the database
+    hashed_username = hash_username(username)
+
+    # Query the database for the hashed username
+    user = DataAccess.get_one_from_table("Users", hashed_username)
+    if user is None:
+        return None
+
+    # Validate the password
+    if bcrypt.checkpw(password.encode(), user.password.encode()):
+        return user
     return None
+
 
 
 def check_new_username(user, new_username):

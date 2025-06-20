@@ -1,5 +1,6 @@
 from Access import DataAccess
 import datetime
+from Logic.encryption import encrypt_data, decrypt_data
 
 field_types = {
     "FirstName": str,
@@ -16,6 +17,8 @@ field_types = {
 }
 
 def add_traveller(traveller_data):
+    for field in ["FirstName", "LastName", "EmailAddress", "MobilePhone", "StreetName"]:
+        traveller_data[field] = encrypt_data(traveller_data[field])
     traveller_data["RegistrationDate"] = datetime.datetime.now().strftime("%Y-%m-%d")
     return DataAccess.add_item_to_table("Travellers", traveller_data)
 
@@ -27,10 +30,23 @@ def delete_traveller(customerID):
 
 
 def search_traveller(search_key):
+    """
+    Searches for a traveller by CustomerID, FirstName, or LastName.
+    """
     travellers = DataAccess.get_all_from_table("Travellers")
     search_key = str(search_key).lower()
+
+    decrypted_travellers = []
+    for traveller in travellers:
+        # Decrypt sensitive fields
+        traveller.first_name = decrypt_data(traveller.first_name)
+        traveller.last_name = decrypt_data(traveller.last_name)
+        decrypted_travellers.append(traveller)
+
+
+    # Perform the search
     return [
-        traveller for traveller in travellers 
+        traveller for traveller in decrypted_travellers
         if search_key in str(traveller.customerID).lower() or
            search_key in traveller.first_name.lower() or
            search_key in traveller.last_name.lower()

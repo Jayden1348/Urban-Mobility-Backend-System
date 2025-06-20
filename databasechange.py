@@ -1,8 +1,11 @@
 import sqlite3
+from Logic.encryption import encrypt_data, hash_password, hash_username
 
 
 def create_database():
-    # SQLite database file name
+    """
+    Creates the SQLite database and tables.
+    """
     db_file = "ScooterApp.db"
 
     # Connect to SQLite database (it will be created if it doesn't exist)
@@ -26,9 +29,9 @@ def create_database():
     CREATE TABLE Users (
         Username TEXT NOT NULL PRIMARY KEY,
         Password TEXT NOT NULL,
-        FirstName TEXT  ,
+        FirstName TEXT,
         LastName TEXT,
-        UserRole INTEGER NOT NULL CHECK(UserRole IN (0, 1, 2)), -- 0 = Super Administrator, 1 = System Administrator, 2 = Service Engineer       
+        UserRole INTEGER NOT NULL CHECK(UserRole IN (0, 1, 2)), -- 0 = Super Administrator, 1 = System Administrator, 2 = Service Engineer
         RegistrationDate DATETIME
     );
     """)
@@ -45,8 +48,8 @@ def create_database():
         ZipCode TEXT NOT NULL,
         City TEXT NOT NULL CHECK(City IN ({','.join([f"'{city}'" for city in CITIES])})),
         EmailAddress TEXT NOT NULL,
-        MobilePhone TEXT NOT NULL, 
-        DrivingLicenseNumber TEXT NOT NULL UNIQUE, 
+        MobilePhone TEXT NOT NULL,
+        DrivingLicenseNumber TEXT NOT NULL UNIQUE,
         RegistrationDate DATETIME NOT NULL
     );
     """)
@@ -58,7 +61,7 @@ def create_database():
         SerialNumber TEXT NOT NULL PRIMARY KEY,
         TopSpeed REAL NOT NULL, -- km/h
         BatteryCapacity REAL NOT NULL, -- Wh
-        StateOfCharge INTEGER NOT NULL CHECK(StateOfCharge BETWEEN 0 AND 100), -- % 
+        StateOfCharge INTEGER NOT NULL CHECK(StateOfCharge BETWEEN 0 AND 100), -- %
         TargetRangeSoCMin INTEGER NOT NULL CHECK(TargetRangeSoCMin BETWEEN 0 AND 100),
         TargetRangeSoCMax INTEGER NOT NULL CHECK(TargetRangeSoCMax BETWEEN 0 AND 100),
         Latitude REAL NOT NULL CHECK(Latitude BETWEEN 51.85 AND 52.05), -- Rotterdam region approx.
@@ -90,16 +93,26 @@ def create_database():
 
 
 def dbconnect(query, data):
+    """
+    Executes a query with the provided data.
+    """
     db_file = "ScooterApp.db"
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
-    cursor.executemany(query, data)
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try:
+        cursor.executemany(query, data)
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def seed_scooters():
+    """
+    Seeds the Scooters table with initial data.
+    """
     scooters = [
         (
             "Segway", "Ninebot", "SN1001", 25.0, 374.0, 100, 20, 80, 51.92, 4.48, 0, 1200.5, "2024-06-01", "2024-01-15"
@@ -123,35 +136,42 @@ def seed_scooters():
 
 
 def seed_users():
+    """
+    Seeds the Users table with initial data.
+    """
     users = [
         # Super Admins (role 0)
-        (0, "super_admin", "Admin_123?", None, None, None),
+        (hash_username("super_admin"), hash_password("Admin_123?"), None, None, 0, "2024-06-01"),
         # System Admins (role 1)
-        (1, "sysadmin1", "SysPass1!", "Alice", "Smith", "2024-06-01"),
-        (1, "sysadmin2", "SysPass2!", "Bob", "Johnson", "2024-06-02"),
+        (hash_username("sysadmin1"), hash_password("SysPass1!"), encrypt_data("Alice"), encrypt_data("Smith"), 1, "2024-06-01"),
+        (hash_username("sysadmin2"), hash_password("SysPass2!"), encrypt_data("Bob"), encrypt_data("Johnson"), 1, "2024-06-02"),
         # Service Engineers (role 2)
-        (2, "engineer1", "EngPass1!", "Charlie", "Brown", "2024-06-03"),
-        (2, "engineer2", "EngPass2!", "Dana", "White", "2024-06-04"),
+        (hash_username("engineer1"), hash_password("EngPass1!"), encrypt_data("Charlie"), encrypt_data("Brown"), 2, "2024-06-03"),
+        (hash_username("engineer2"), hash_password("EngPass2!"), encrypt_data("Dana"), encrypt_data("White"), 2, "2024-06-04"),
     ]
+
+
     query = """
-        INSERT INTO Users (UserRole, Username, Password, FirstName, LastName, RegistrationDate)
+        INSERT INTO Users (Username, Password, FirstName, LastName, UserRole, RegistrationDate)
         VALUES (?, ?, ?, ?, ?, ?)
     """
     dbconnect(query, users)
     print("Users table seeded successfully.")
 
-
 def seed_logs():
+    """
+    Seeds the Logs table with initial data.
+    """
     logs = [
         # (Date, Time, Username, Description, AdditionalInfo, Suspicious)
-        ("2021-05-12", "15:51:19", "john_m_05", "Logged in", None, 0),
-        ("2021-05-12", "18:00:20", "superadmin",
+        ("2021-05-12", "15:51:19", encrypt_data("john_m_05"), "Logged in", None, 0),
+        ("2021-05-12", "18:00:20", encrypt_data("superadmin"),
          "New admin user is created", "username: mike12", 0),
         ("2021-05-12", "18:05:33", None, "Unsuccessful login",
          'username: "mike12" is used for a login attempt with a wrong password', 0),
         ("2021-05-12", "18:07:10", None, "Unsuccessful login",
          "Multiple usernames and passwords are tried in a row", 1),
-        ("2021-05-12", "18:08:02", "superadmin",
+        ("2021-05-12", "18:08:02", encrypt_data("superadmin"),
          "User is deleted", 'User "mike12" is deleted', 0),
     ]
     query = """
@@ -162,8 +182,40 @@ def seed_logs():
     print("Logs table seeded successfully.")
 
 
+def seed_travellers():
+    """
+    Seeds the Travellers table with initial data.
+    """
+    travellers = [
+        {
+            "FirstName": encrypt_data("John"),
+            "LastName": encrypt_data("Doe"),
+            "DateOfBirth": "2000-01-01",
+            "Gender": "male",
+            "StreetName": encrypt_data("Main Street"),
+            "HouseNumber": "123",
+            "ZipCode": "12345",
+            "City": "Rotterdam",
+            "EmailAddress": encrypt_data("John@example.com"),
+            "MobilePhone": encrypt_data("1234567890"),
+            "DrivingLicenseNumber": encrypt_data("DL123456"),
+            "RegistrationDate": "2024-06-01"
+        },
+    ]
+
+    query = """
+        INSERT INTO Travellers (
+            FirstName, LastName, DateOfBirth, Gender, StreetName, HouseNumber,
+            ZipCode, City, EmailAddress, MobilePhone, DrivingLicenseNumber, RegistrationDate
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    dbconnect(query, [tuple(traveller.values()) for traveller in travellers])
+    print("Travellers table seeded successfully.")
+
+
 if __name__ == "__main__":
     create_database()
     seed_users()
     seed_scooters()
     seed_logs()
+    seed_travellers()

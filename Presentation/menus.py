@@ -43,7 +43,7 @@ def super_admin_menu(user):  # DONE
                 return
         else:
             print("\nInvalid option. Please try again.")
-            wait(2)
+            input("Press Enter to continue...")
             clear_screen()
 
 
@@ -101,10 +101,10 @@ def service_engineer_menu(user):
         clear_screen()
 
         if choice == "1":
-            pass
+            scooter_presentation.search_scooter_info()
             # Search scooter info
         elif choice == "2":
-            pass
+            scooter_presentation.update_scooter_info(user)
             # Update SOME (not all) scooter info
             # Servcie engineer can only change: state_of_charge, target_range_soc_min, target_range_soc_max, latitude, longitude, out_of_service, mileage, in_service_date
             # Service engineer can NOT change: brand, model, serial_number, top_speed, battery_capacity

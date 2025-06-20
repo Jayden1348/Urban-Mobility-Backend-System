@@ -41,7 +41,7 @@ def start():
                 if logintries == 2:
                     logs_logic.new_log(
                         None, "Unsuccessful login", f"Multiple failed login attempts in a row", 1)
-                wait(2)
+                input("Press Enter to try again...")
         elif choice in ("2", "e"):
             print("Goodbye!")
             break

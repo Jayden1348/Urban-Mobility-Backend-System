@@ -1,6 +1,7 @@
 import sqlite3
 from Models.DataModels import User, Traveller, Scooter, Log
-
+from Logic.encryption import encrypt_data, decrypt_data
+from Logic.encryption import hash_password
 
 def get_all_from_table(table_name):
     allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
@@ -119,6 +120,15 @@ def add_item_to_table(table_name, new_values):
     allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
     if table_name not in allowed_tables:
         raise ValueError("Invalid table name.")
+
+    # encription
+    if table_name == "Users":
+        new_values["Username"] = encrypt_data(new_values["Username"])
+        new_values["Password"] = hash_password(new_values["Password"])  # Hash passwords
+    elif table_name == "Travellers":
+        for field in ["FirstName", "LastName", "EmailAddress", "MobilePhone", "StreetName"]:
+            new_values[field] = encrypt_data(new_values[field])
+
 
     columns = ", ".join(new_values.keys())
     placeholders = ", ".join(["?"] * len(new_values))

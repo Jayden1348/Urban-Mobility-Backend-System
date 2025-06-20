@@ -19,13 +19,13 @@ def scooter_functions(user):  # Accessible by SuperAdmin & SystemAdmin
             scooter_presentation.search_scooter_info()
             # Search scooter info
         elif choice == "2":
-            scooter_presentation.update_scooter_info()
+            scooter_presentation.update_scooter_info(user)
             # Update scooter info
         elif choice == "3":
-            scooter_presentation.add_scooter()
+            scooter_presentation.add_scooter(user)
             # Add scooter
         elif choice == "4":
-            scooter_presentation.delete_scooter()
+            scooter_presentation.delete_scooter(user)
             # Delete scooter
         elif choice == "5" or choice == "b":
             return
