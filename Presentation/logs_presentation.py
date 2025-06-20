@@ -14,18 +14,15 @@ def show_all_logs():
     print(f"{'ID':<4} {'Date':<12} {'Time':<10} {'Username':<15} {'Description':<30} {'AdditionalInfo':<25} {'Suspicious':<10}")
     print("-" * 120)
     for log in logs:
-        log_id = getattr(log, "LogID", getattr(log, "logid", ""))
-        date = getattr(log, "Date", getattr(log, "date", ""))
-        time = getattr(log, "Time", getattr(log, "time", ""))
-        username = getattr(log, "Username", getattr(log, "username", ""))
-        description = getattr(log, "Description",
-                              getattr(log, "description", ""))
-        additionalinfo = getattr(log, "AdditionalInfo",
-                                 getattr(log, "additionalinfo", ""))
-        suspicious = getattr(log, "Suspicious", getattr(log, "suspicious", 0))
-        suspicious_str = "Yes" if suspicious else "No"
+        log_id = log.log_id
+        date = log.date
+        time = log.time
+        username = log.username
+        description = log.description
+        additionalinfo = log.additional_info
+        suspicious = log.suspicious
         print(
-            f"{str(log_id):<4} {str(date):<12} {str(time):<10} {str(username or '-'): <15} {str(description)[:28]:<30} {str(additionalinfo)[:23]:<25} {suspicious_str:<10}"
+            f"{str(log_id):<4} {str(date):<12} {str(time):<10} {str(username or '-'): <15} {str(description)[:28]:<30} {str(additionalinfo)[:23]:<25} {suspicious:<10}"
         )
 
     input("\nPress Enter to return...")

@@ -5,21 +5,14 @@ from Models.DataModels import Log
 
 def get_all_logs():
     logs = []
-    for row in LogAccess.read_encrypted_logs_csv():
-        # Skip empty or malformed rows
-        if not row or not row[0].isdigit():
-            continue
-        log = Log(
-            LogID=int(row[0]),
-            Date=row[1],
-            Time=row[2],
-            Username=row[3],
-            Description=row[4],
-            AdditionalInfo=row[5],
-            Suspicious=int(row[6])
-        )
-        logs.append(log)
-    return logs
+    try:
+        for row in LogAccess.read_encrypted_logs_csv():
+            log = Log(int(row[0]), row[1], row[2],
+                      row[3], row[4], row[5], int(row[6]))
+            logs.append(log)
+        return logs
+    except Exception as e:
+        return e
 
 
 def get_next_log_id():
