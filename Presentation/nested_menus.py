@@ -1,5 +1,7 @@
 from .generaltools import *
-from . import account_presentation, users_presentation, scooter_presentation
+
+from . import account_presentation, users_presentation, scooter_presentation, traveller_presentation
+
 
 
 def scooter_functions(user):  # Accessible by SuperAdmin & SystemAdmin
@@ -18,13 +20,13 @@ def scooter_functions(user):  # Accessible by SuperAdmin & SystemAdmin
             scooter_presentation.search_scooter_info()
             # Search scooter info
         elif choice == "2":
-            scooter_presentation.update_scooter_info(user)
+            scooter_presentation.update_scooter_info()
             # Update scooter info
         elif choice == "3":
-            scooter_presentation.add_scooter(user)
+            scooter_presentation.add_scooter()
             # Add scooter
         elif choice == "4":
-            scooter_presentation.delete_scooter(user)
+            scooter_presentation.delete_scooter()
             # Delete scooter
         elif choice == "5" or choice == "b":
             return
@@ -46,16 +48,16 @@ def traveller_functions(user):  # Accessible by SuperAdmin & SystemAdmin
         clear_screen()
 
         if choice == "1":
-            pass
+            traveller_presentation.search_traveller_info()
             # Search traveller info
         elif choice == "2":
-            pass
+            traveller_presentation.update_traveller_info()
             # Update traveller info
         elif choice == "3":
-            pass
+            traveller_presentation.add_traveller()
             # Add traveller
         elif choice == "4":
-            pass
+            traveller_presentation.delete_traveller()
             # Delete traveller
         elif choice == "5" or choice == "b":
             return

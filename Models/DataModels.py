@@ -16,9 +16,10 @@ class User:
 
 class Traveller:
     def __init__(
-        self, FirstName, LastName, DateOfBirth, Gender, StreetName, HouseNumber,
+        self, CustomerID, FirstName, LastName, DateOfBirth, Gender, StreetName, HouseNumber,
         ZipCode, City, EmailAddress, MobilePhone, DrivingLicenseNumber, RegistrationDate
     ):
+        self.customerID = CustomerID
         self.first_name = FirstName
         self.last_name = LastName
         self.date_of_birth = DateOfBirth

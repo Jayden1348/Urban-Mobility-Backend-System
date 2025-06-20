@@ -35,6 +35,7 @@ def create_database():
 
     cursor.execute(f"""
     CREATE TABLE Travellers (
+        CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
         FirstName TEXT NOT NULL,
         LastName TEXT NOT NULL,
         DateOfBirth DATE NOT NULL,
@@ -45,7 +46,7 @@ def create_database():
         City TEXT NOT NULL CHECK(City IN ({','.join([f"'{city}'" for city in CITIES])})),
         EmailAddress TEXT NOT NULL,
         MobilePhone TEXT NOT NULL, 
-        DrivingLicenseNumber TEXT NOT NULL PRIMARY KEY, 
+        DrivingLicenseNumber TEXT NOT NULL UNIQUE, 
         RegistrationDate DATETIME NOT NULL
     );
     """)
