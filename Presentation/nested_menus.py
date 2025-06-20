@@ -1,6 +1,5 @@
 from .generaltools import *
-
-from . import account_presentation, users_presentation, scooter_presentation, traveller_presentation
+from . import account_presentation, users_presentation, scooter_presentation, backup_presentation,  traveller_presentation
 
 
 
@@ -133,12 +132,10 @@ def backend_system_functions(user):
         clear_screen()
 
         if choice == "1":
-            pass
-            # Make backup of backend system
+            backup_presentation.make_backup(user)
         elif choice == "2":
-            pass
-            # Restore backup of backend system (! If the user is a SystemAdmin, it needs a code. The SuperAdmin has full clearance)
-            # Give "role" to a function that checks if the user is SystemAdmin and needs the code.
+            backup_presentation.restore_backup(user)
+
         elif (choice == "3" or choice == "b") and role != 0:
             return
 

@@ -20,6 +20,7 @@ def start():
             if user:
                 clear_screen()
                 print(f"\nCorrect Login\nWelcome {username}!\n")
+                logintries = 0
                 logs_logic.new_log(user.username, "Logged in", None, 0)
                 wait(2)
                 if user.user_role == 0:
@@ -33,10 +34,11 @@ def start():
                     wait(2)
             else:
                 print("\nUsername or password is incorrect!")
-                logs_logic.new_log(
-                    None, "Unsuccessful login", f"username: {username} is used for a login attempt with a wrong password", 0)
                 logintries += 1
-                if logintries == 3:
+                if logintries == 1:
+                    logs_logic.new_log(
+                        None, "Unsuccessful login", f"username: {username} is used for a login attempt with a wrong password", 0)
+                if logintries == 2:
                     logs_logic.new_log(
                         None, "Unsuccessful login", f"Multiple failed login attempts in a row", 1)
                 wait(2)
