@@ -81,8 +81,7 @@ def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
         elif choice == "2":
             roles_presentation.add_role(2)
         elif choice == "3":
-            pass
-            # Delete service engineer
+            roles_presentation.delete_role(2)
         elif choice == "4" or choice == "b":
             return
         else:
@@ -106,8 +105,7 @@ def system_admin_functions():  # Accessible only by SuperAdmin
         elif choice == "2":
             roles_presentation.add_role(1)
         elif choice == "3":
-            pass
-            # Delete system admin
+            roles_presentation.delete_role(1)
         elif choice == "4" or choice == "b":
             return
         else:

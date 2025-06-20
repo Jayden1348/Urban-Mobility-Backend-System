@@ -26,6 +26,40 @@ def get_all_from_table(table_name):
     return objects
 
 
+def get_one_from_table(table_name, identifier_value):
+    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    if table_name not in allowed_tables:
+        raise ValueError("Invalid table name.")
+
+    primary_keys = {
+        'Users': "Username",
+        'Travellers': "DrivingLicenseNumber",
+        'Scooters': "SerialNumber",
+        'Logs': "LogID"
+    }
+    identifier = primary_keys[table_name]
+
+    conn = sqlite3.connect('ScooterApp.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    query = f"SELECT * FROM {table_name} WHERE {identifier} = ?"
+    cursor.execute(query, (identifier_value,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    model_map = {
+        'Users': User,
+        'Travellers': Traveller,
+        'Scooters': Scooter,
+        'Logs': Log
+    }
+    model_class = model_map[table_name]
+    return model_class(**dict(row))
+
+
 def update_item_from_table(table_name, identifier_value, new_values):
     allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
     if table_name not in allowed_tables:

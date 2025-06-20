@@ -5,13 +5,10 @@ import string
 
 
 def validate_password(username, password):
-    users = DataAccess.get_all_from_table("Users")
-    for user in users:
-        if user.username == username:
-            if user.password == password:
-                return user
-            else:
-                return None
+    user = DataAccess.get_one_from_table("Users", username)
+    if user is not None:
+        if user.password == password:
+            return user
     return None
 
 
