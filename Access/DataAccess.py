@@ -26,6 +26,40 @@ def get_all_from_table(table_name):
     return objects
 
 
+def get_one_from_table(table_name, identifier_value):
+    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    if table_name not in allowed_tables:
+        raise ValueError("Invalid table name.")
+
+    primary_keys = {
+        'Users': "Username",
+        'Travellers': "DrivingLicenseNumber",
+        'Scooters': "SerialNumber",
+        'Logs': "LogID"
+    }
+    identifier = primary_keys[table_name]
+
+    conn = sqlite3.connect('ScooterApp.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    query = f"SELECT * FROM {table_name} WHERE {identifier} = ?"
+    cursor.execute(query, (identifier_value,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    model_map = {
+        'Users': User,
+        'Travellers': Traveller,
+        'Scooters': Scooter,
+        'Logs': Log
+    }
+    model_class = model_map[table_name]
+    return model_class(**dict(row))
+
+
 def update_item_from_table(table_name, identifier_value, new_values):
     allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
     if table_name not in allowed_tables:
@@ -53,6 +87,7 @@ def update_item_from_table(table_name, identifier_value, new_values):
     cursor.close()
     conn.close()
     return success
+
 
 def find_item_in_table(table_name, identifier_value):
     """
@@ -89,10 +124,7 @@ def find_item_in_table(table_name, identifier_value):
     return None
 
 
-def delete_item_from_table(table_name, identifier_value):
-    """
-    Deletes a single item from a table by its primary key.
-    """
+def remove_item_from_table(table_name, identifier_value):
     allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
     if table_name not in allowed_tables:
         raise ValueError("Invalid table name.")
@@ -105,23 +137,28 @@ def delete_item_from_table(table_name, identifier_value):
     }
     identifier = primary_keys[table_name]
 
+    query = f"DELETE FROM {table_name} WHERE {identifier} = ?"
+
     conn = sqlite3.connect('ScooterApp.db')
     cursor = conn.cursor()
-    cursor.execute(f"DELETE FROM {table_name} WHERE {identifier} = ?", (identifier_value,))
+    cursor.execute(query, (identifier_value,))
     conn.commit()
     success = cursor.rowcount > 0  # True if at least one row was deleted
     cursor.close()
     conn.close()
     return success
 
-def insert_item_into_table(table_name, data):
+
+
+def add_item_to_table(table_name, new_values):
+
     allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
     if table_name not in allowed_tables:
         raise ValueError("Invalid table name.")
 
-    columns = ", ".join(data.keys())
-    placeholders = ", ".join(["?" for _ in data.values()])
-    values = list(data.values())
+    columns = ", ".join(new_values.keys())
+    placeholders = ", ".join(["?"] * len(new_values))
+    values = list(new_values.values())
 
     query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
@@ -131,8 +168,10 @@ def insert_item_into_table(table_name, data):
         cursor.execute(query, values)
         conn.commit()
         success = True
-    except sqlite3.IntegrityError as e:
-        print(f"Error: {e}")
+
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+
         success = False
     finally:
         cursor.close()

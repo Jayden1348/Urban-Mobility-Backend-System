@@ -1,6 +1,6 @@
 from .generaltools import *
-from . import account_presentation
-from . import scooter_presentation
+from . import account_presentation, roles_presentation, scooter_presentation
+
 
 def scooter_functions(user):  # Accessible by SuperAdmin & SystemAdmin
     while True:
@@ -64,7 +64,7 @@ def traveller_functions():  # Accessible by SuperAdmin & SystemAdmin
             wait(2)
 
 
-def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
+def service_engineer_functions():   # DONE Accessible by SuperAdmin & SystemAdmin
     while True:
         clear_screen()
         print("Service engineer related functions:\n")
@@ -76,21 +76,18 @@ def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
         clear_screen()
 
         if choice == "1":
-            pass
-            # Update service engineer info (+ change/reset his password to temporary password)
+            roles_presentation.update_role(2)
         elif choice == "2":
-            pass
-            # Add service engineer
+            roles_presentation.add_role(2)
         elif choice == "3":
-            pass
-            # Delete service engineer
+            roles_presentation.delete_role(2)
         elif choice == "4" or choice == "b":
             return
         else:
             print("\nInvalid option. Please try again.")
 
 
-def system_admin_functions():  # Accessible only by SuperAdmin
+def system_admin_functions():       # DONE Accessible only by SuperAdmin
     while True:
         clear_screen()
         print("System admin related functions:\n")
@@ -102,14 +99,11 @@ def system_admin_functions():  # Accessible only by SuperAdmin
         clear_screen()
 
         if choice == "1":
-            pass
-            # Update system admin info (+ change/reset his password to temporary password)
+            roles_presentation.update_role(1)
         elif choice == "2":
-            pass
-            # Add system admin
+            roles_presentation.add_role(1)
         elif choice == "3":
-            pass
-            # Delete system admin
+            roles_presentation.delete_role(1)
         elif choice == "4" or choice == "b":
             return
         else:
@@ -158,7 +152,7 @@ def backend_system_functions(user):
             wait(2)
 
 
-def account_functions(user):  # Accessible by SystemAdmin & Service Engineer
+def account_functions(user):        # DONE Accessible by SystemAdmin & Service Engineer
     while True:
         clear_screen()
         print("Account functions:\n")
@@ -175,11 +169,10 @@ def account_functions(user):  # Accessible by SystemAdmin & Service Engineer
         elif choice == "2":
             account_presentation.update_password(user)
         elif choice == "3":
-            pass
-            # Update profile (Last name / first name / registration date)
+            account_presentation.update_profile(user)
         elif choice == "4":
-            pass
-            # Delete account
+            if account_presentation.delete_account(user) == "LogOut":
+                return "LogOut"
         elif choice == "5" or choice == "b":
             return
         else:
