@@ -17,7 +17,7 @@ field_types = {
 }
 
 def add_scooter(scooter_data):
-    return DataAccess.insert_item_into_table("Scooters", scooter_data)
+    return DataAccess.add_item_to_table("Scooters", scooter_data)
 
 
 def update_scooter(serial_number, updated_data):
@@ -25,7 +25,7 @@ def update_scooter(serial_number, updated_data):
 
 
 def delete_scooter(serial_number):
-    return DataAccess.delete_item_from_table("Scooters", serial_number)
+    return DataAccess.remove_item_from_table("Scooters", serial_number)
 
 
 def search_scooter(search_key):
@@ -131,7 +131,7 @@ def get_scooter_by_serial_number(serial_number):
     """
     Retrieves the current values of a scooter by its serial number.
     """
-    scooter = DataAccess.find_item_in_table("Scooters", serial_number)
+    scooter = DataAccess.get_one_from_table("Scooters", serial_number)
     if scooter:
         return scooter
     return {}
