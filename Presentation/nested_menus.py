@@ -79,8 +79,7 @@ def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
             pass
             # Update service engineer info (+ change/reset his password to temporary password)
         elif choice == "2":
-            pass
-            # Add service engineer
+            roles_presentation.add_role(2)
         elif choice == "3":
             pass
             # Delete service engineer

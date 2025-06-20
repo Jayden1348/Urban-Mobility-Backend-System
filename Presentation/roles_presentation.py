@@ -9,7 +9,11 @@ def add_role(rolenum):
             f"Add a new {'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'}\n")
 
         username = input(
-            "Enter username: ").strip().lower()
+            "Enter username (or press Enter to cancel): ").strip().lower()
+        if not username:
+            print("\nUser creation cancelled.")
+            wait(2)
+            return
         checkresult = account_logic.check_new_username(None, username)
         if checkresult:
             print(f"\nUsername not correct: {checkresult}")
