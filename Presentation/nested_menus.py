@@ -1,5 +1,5 @@
 from .generaltools import *
-from . import account_presentation, roles_presentation, scooter_presentation
+from . import account_presentation, users_presentation, scooter_presentation
 
 
 def scooter_functions(user):  # Accessible by SuperAdmin & SystemAdmin
@@ -76,11 +76,11 @@ def service_engineer_functions():   # DONE Accessible by SuperAdmin & SystemAdmi
         clear_screen()
 
         if choice == "1":
-            roles_presentation.update_role(2)
+            users_presentation.update_user(2)
         elif choice == "2":
-            roles_presentation.add_role(2)
+            users_presentation.add_user(2)
         elif choice == "3":
-            roles_presentation.delete_role(2)
+            users_presentation.delete_user(2)
         elif choice == "4" or choice == "b":
             return
         else:
@@ -99,11 +99,11 @@ def system_admin_functions():       # DONE Accessible only by SuperAdmin
         clear_screen()
 
         if choice == "1":
-            roles_presentation.update_role(1)
+            users_presentation.update_user(1)
         elif choice == "2":
-            roles_presentation.add_role(1)
+            users_presentation.add_user(1)
         elif choice == "3":
-            roles_presentation.delete_role(1)
+            users_presentation.delete_user(1)
         elif choice == "4" or choice == "b":
             return
         else:

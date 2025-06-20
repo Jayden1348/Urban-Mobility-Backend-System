@@ -1,8 +1,8 @@
 from .generaltools import *
-from Logic import account_logic, roles_logic
+from Logic import account_logic, user_logic
 
 
-def add_role(rolenum):
+def add_user(rolenum):
     while True:
         clear_screen()
         print(
@@ -36,7 +36,7 @@ Last name: {last_name}\n
             wait(2)
             return
         temp_password = account_logic.generate_password()
-        success = roles_logic.add_role(
+        success = user_logic.add_user(
             username, temp_password, first_name, last_name, rolenum)
         if success:
             print(f"\n{'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'} successfully created.")
@@ -50,7 +50,7 @@ Last name: {last_name}\n
             return
 
 
-def delete_role(rolenum):
+def delete_user(rolenum):
     while True:
         clear_screen()
         print(
@@ -66,7 +66,7 @@ def delete_role(rolenum):
             return
 
         # Check if user exists and has the correct role
-        user = roles_logic.get_role_by_username(username, rolenum)
+        user = user_logic.get_user_by_username(username, rolenum)
         if not user:
             print(
                 f"\nNo user found or this user is not a {'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'}.")
@@ -80,7 +80,7 @@ def delete_role(rolenum):
             wait(2)
             return
 
-        success = roles_logic.delete_role(username)
+        success = user_logic.delete_user(username)
         if success:
             print(f"\n{'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'} successfully deleted.")
             wait(2)
@@ -91,7 +91,7 @@ def delete_role(rolenum):
             return
 
 
-def update_role(rolenum):
+def update_user(rolenum):
     while True:
         clear_screen()
         print(
@@ -107,7 +107,7 @@ def update_role(rolenum):
             return
 
         # Check if user exists and has the correct role
-        user = roles_logic.get_role_by_username(old_username, rolenum)
+        user = user_logic.get_user_by_username(old_username, rolenum)
         if not user:
             print(
                 f"\nNo user found or this user is not a {'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'}.")
@@ -172,7 +172,7 @@ Last name: {new_last_name}\n
                     wait(2)
                     return
 
-                success = roles_logic.update_role(
+                success = user_logic.update_user(
                     old_username, new_username, new_password, new_first_name, new_last_name)
                 if success:
                     print(
@@ -187,3 +187,41 @@ Last name: {new_last_name}\n
                     print("\nUpdate failed, something went wrong.")
                     wait(2)
                     return
+
+
+def show_all_users():
+    clear_screen()
+    users = user_logic.get_all_users()
+    if not users:
+        print("No users found.")
+        wait(2)
+        return
+
+    print("All Users:\n")
+    print(f"{'Username':<15} {'Role':<11} {'First Name':<15} {'Last Name':<15} {'Registration Date':<15}")
+    print("-" * 70)
+    for user in users:
+        username = getattr(user, "username", getattr(user, "Username", ""))
+        role = getattr(user, "user_role", getattr(user, "UserRole", ""))
+        # Convert role number to string if needed
+        if isinstance(role, int):
+            if role == 0:
+                role_str = "SuperAdmin"
+            elif role == 1:
+                role_str = "SysAdmin"
+            elif role == 2:
+                role_str = "Engineer"
+            else:
+                role_str = str(role)
+        else:
+            role_str = str(role)
+        first_name = getattr(user, "first_name",
+                             getattr(user, "FirstName", ""))
+        last_name = getattr(user, "last_name", getattr(user, "LastName", ""))
+        reg_date = getattr(user, "registration_date",
+                           getattr(user, "RegistrationDate", ""))
+        print(
+            f"{str(username or ''):<15} {str(role_str or ''):<11} {str(first_name or ''):<15} {str(last_name or ''):<15} {str(reg_date or ''):<15}")
+
+    input("\nPress Enter to return...")
+    clear_screen()
