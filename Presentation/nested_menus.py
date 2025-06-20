@@ -1,5 +1,5 @@
 from .generaltools import *
-from . import account_presentation
+from . import account_presentation, roles_presentation
 
 
 def scooter_functions():  # Accessible by SuperAdmin & SystemAdmin
@@ -105,8 +105,7 @@ def system_admin_functions():  # Accessible only by SuperAdmin
             pass
             # Update system admin info (+ change/reset his password to temporary password)
         elif choice == "2":
-            pass
-            # Add system admin
+            roles_presentation.add_role(1)
         elif choice == "3":
             pass
             # Delete system admin
@@ -158,7 +157,7 @@ def backend_system_functions(user):
             wait(2)
 
 
-def account_functions(user):  # Accessible by SystemAdmin & Service Engineer
+def account_functions(user):  # DONE Accessible by SystemAdmin & Service Engineer
     while True:
         clear_screen()
         print("Account functions:\n")

@@ -78,3 +78,29 @@ def remove_item_from_table(table_name, identifier_value):
     cursor.close()
     conn.close()
     return success
+
+
+def add_item_to_table(table_name, new_values):
+    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    if table_name not in allowed_tables:
+        raise ValueError("Invalid table name.")
+
+    columns = ", ".join(new_values.keys())
+    placeholders = ", ".join(["?"] * len(new_values))
+    values = list(new_values.values())
+
+    query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+    conn = sqlite3.connect('ScooterApp.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, values)
+        conn.commit()
+        success = True
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+        success = False
+    finally:
+        cursor.close()
+        conn.close()
+    return success

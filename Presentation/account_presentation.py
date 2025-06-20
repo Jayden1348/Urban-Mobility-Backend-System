@@ -81,9 +81,9 @@ def update_profile(user):
         print(f"Current last name:  {user.last_name}")
 
         new_first_name = input(
-            "\nEnter new first name (or press Enter to keep current): ").strip()
+            "\nEnter new first name (or press Enter to keep current): ").strip().capitalize()
         new_last_name = input(
-            "Enter new last name (or press Enter to keep current): ").strip()
+            "Enter new last name (or press Enter to keep current): ").strip().capitalize()
 
         # Use current values if nothing entered
         if not new_first_name:
