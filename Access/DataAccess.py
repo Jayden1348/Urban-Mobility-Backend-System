@@ -88,7 +88,6 @@ def update_item_from_table(table_name, identifier_value, new_values):
     conn.close()
     return success
 
-
 def remove_item_from_table(table_name, identifier_value):
     allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
     if table_name not in allowed_tables:
@@ -114,7 +113,9 @@ def remove_item_from_table(table_name, identifier_value):
     return success
 
 
+
 def add_item_to_table(table_name, new_values):
+
     allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
     if table_name not in allowed_tables:
         raise ValueError("Invalid table name.")
@@ -131,10 +132,13 @@ def add_item_to_table(table_name, new_values):
         cursor.execute(query, values)
         conn.commit()
         success = True
+
     except sqlite3.Error as e:
         print(f"SQLite error: {e}")
+
         success = False
     finally:
         cursor.close()
         conn.close()
+
     return success

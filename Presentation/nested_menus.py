@@ -1,8 +1,8 @@
 from .generaltools import *
-from . import account_presentation, users_presentation
+from . import account_presentation, users_presentation, scooter_presentation
 
 
-def scooter_functions():  # Accessible by SuperAdmin & SystemAdmin
+def scooter_functions(user):  # Accessible by SuperAdmin & SystemAdmin
     while True:
         clear_screen()
         print("Scooter related functions:\n")
@@ -15,16 +15,16 @@ def scooter_functions():  # Accessible by SuperAdmin & SystemAdmin
         clear_screen()
 
         if choice == "1":
-            pass
+            scooter_presentation.search_scooter_info()
             # Search scooter info
         elif choice == "2":
-            pass
+            scooter_presentation.update_scooter_info(user)
             # Update scooter info
         elif choice == "3":
-            pass
+            scooter_presentation.add_scooter(user)
             # Add scooter
         elif choice == "4":
-            pass
+            scooter_presentation.delete_scooter(user)
             # Delete scooter
         elif choice == "5" or choice == "b":
             return
