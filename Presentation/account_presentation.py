@@ -1,5 +1,5 @@
 from .generaltools import *
-from Logic import account_logic
+from Logic import account_logic, logs_logic
 
 
 def update_username(user):
@@ -21,6 +21,8 @@ def update_username(user):
 
         if account_logic.change_username(user.username, new_username):
             print(f"\nUsername successfully changed to: {new_username}")
+            logs_logic.new_log(user.username, "Updated username",
+                               f"{user.username} changed his username to {new_username}", 0)
             wait(2)
             user.username = new_username
             return
@@ -64,6 +66,7 @@ def update_password(user):
 
         if account_logic.change_password(user.username, new_password):
             print("\nPassword successfully changed.")
+            logs_logic.new_log(user.username, "Updated password", None, 0)
             wait(2)
             user.password = new_password
             return
@@ -115,6 +118,7 @@ def update_profile(user):
         )
         if success:
             print("\nProfile updated successfully.")
+            logs_logic.new_log(user.username, "Updated profile", None, 0)
             user.first_name = new_first_name
             user.last_name = new_last_name
             wait(2)
@@ -151,6 +155,8 @@ def delete_account(user):
 
             if account_logic.delete_account(user.username):
                 print("\nAccount deleted successfully.")
+                logs_logic.new_log(user.username, "Deleted user",
+                                   f"{user.username} deleted his own account", 0)
                 wait(2)
                 print("\nLogging out. Goodbye!")
                 wait(2)

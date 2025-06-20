@@ -1,5 +1,7 @@
 from .generaltools import *
-from . import account_presentation, roles_presentation, scooter_presentation, traveller_presentation
+
+from . import account_presentation, users_presentation, scooter_presentation, traveller_presentation
+
 
 
 def scooter_functions(user):  # Accessible by SuperAdmin & SystemAdmin
@@ -64,7 +66,8 @@ def traveller_functions(user):  # Accessible by SuperAdmin & SystemAdmin
             wait(2)
 
 
-def service_engineer_functions():   # DONE Accessible by SuperAdmin & SystemAdmin
+# DONE Accessible by SuperAdmin & SystemAdmin
+def service_engineer_functions(user):
     while True:
         clear_screen()
         print("Service engineer related functions:\n")
@@ -76,18 +79,18 @@ def service_engineer_functions():   # DONE Accessible by SuperAdmin & SystemAdmi
         clear_screen()
 
         if choice == "1":
-            roles_presentation.update_role(2)
+            users_presentation.update_user(user, 2)
         elif choice == "2":
-            roles_presentation.add_role(2)
+            users_presentation.add_user(user, 2)
         elif choice == "3":
-            roles_presentation.delete_role(2)
+            users_presentation.delete_user(user, 2)
         elif choice == "4" or choice == "b":
             return
         else:
             print("\nInvalid option. Please try again.")
 
 
-def system_admin_functions():       # DONE Accessible only by SuperAdmin
+def system_admin_functions(user):       # DONE Accessible only by SuperAdmin
     while True:
         clear_screen()
         print("System admin related functions:\n")
@@ -99,11 +102,11 @@ def system_admin_functions():       # DONE Accessible only by SuperAdmin
         clear_screen()
 
         if choice == "1":
-            roles_presentation.update_role(1)
+            users_presentation.update_user(user, 1)
         elif choice == "2":
-            roles_presentation.add_role(1)
+            users_presentation.add_user(user, 1)
         elif choice == "3":
-            roles_presentation.delete_role(1)
+            users_presentation.delete_user(user, 1)
         elif choice == "4" or choice == "b":
             return
         else:
