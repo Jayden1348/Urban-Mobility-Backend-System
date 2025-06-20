@@ -75,4 +75,6 @@ class Log:
         self.suspicious = Suspicious  # 0 = No, 1 = Yes
 
     def __repr__(self):
-        return f"Log({self.log_id}, {self.date} {self.time}, user={self.username})"
+        return (f"Log(log_id={self.log_id}, date={self.date}, time={self.time}, "
+                f"username={self.username}, description={self.description}, "
+                f"additional_info={self.additional_info}, suspicious={self.suspicious})")

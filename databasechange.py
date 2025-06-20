@@ -73,18 +73,6 @@ def create_database():
     );
     """)
 
-    cursor.execute("""
-    CREATE TABLE Logs (
-        LogID INTEGER PRIMARY KEY AUTOINCREMENT,
-        Date DATE NOT NULL,
-        Time TIME NOT NULL,
-        Username TEXT,
-        Description TEXT NOT NULL,
-        AdditionalInfo TEXT,
-        Suspicious INTEGER NOT NULL CHECK(Suspicious IN (0, 1)) -- 0 = No, 1 = Yes
-    );
-    """)
-
     conn.commit()
     cursor.close()
     conn.close()
@@ -158,6 +146,7 @@ def seed_users():
     dbconnect(query, users)
     print("Users table seeded successfully.")
 
+
 def seed_logs():
     """
     Seeds the Logs table with initial data.
@@ -219,3 +208,4 @@ if __name__ == "__main__":
     seed_scooters()
     seed_logs()
     seed_travellers()
+
