@@ -53,3 +53,89 @@ def update_item_from_table(table_name, identifier_value, new_values):
     cursor.close()
     conn.close()
     return success
+
+def find_item_in_table(table_name, identifier_value):
+    """
+    Finds a single item in a table by its primary key.
+    """
+    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    if table_name not in allowed_tables:
+        raise ValueError("Invalid table name.")
+
+    primary_keys = {
+        'Users': "Username",
+        'Travellers': "DrivingLicenseNumber",
+        'Scooters': "SerialNumber",
+        'Logs': "LogID"
+    }
+    identifier = primary_keys[table_name]
+
+    conn = sqlite3.connect('ScooterApp.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM {table_name} WHERE {identifier} = ?", (identifier_value,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row:
+        model_map = {
+            'Users': User,
+            'Travellers': Traveller,
+            'Scooters': Scooter,
+            'Logs': Log
+        }
+        model_class = model_map[table_name]
+        return model_class(**dict(row))
+    return None
+
+
+def delete_item_from_table(table_name, identifier_value):
+    """
+    Deletes a single item from a table by its primary key.
+    """
+    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    if table_name not in allowed_tables:
+        raise ValueError("Invalid table name.")
+
+    primary_keys = {
+        'Users': "Username",
+        'Travellers': "DrivingLicenseNumber",
+        'Scooters': "SerialNumber",
+        'Logs': "LogID"
+    }
+    identifier = primary_keys[table_name]
+
+    conn = sqlite3.connect('ScooterApp.db')
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE FROM {table_name} WHERE {identifier} = ?", (identifier_value,))
+    conn.commit()
+    success = cursor.rowcount > 0  # True if at least one row was deleted
+    cursor.close()
+    conn.close()
+    return success
+
+def insert_item_into_table(table_name, data):
+    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    if table_name not in allowed_tables:
+        raise ValueError("Invalid table name.")
+
+    columns = ", ".join(data.keys())
+    placeholders = ", ".join(["?" for _ in data.values()])
+    values = list(data.values())
+
+    query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+    conn = sqlite3.connect('ScooterApp.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute(query, values)
+        conn.commit()
+        success = True
+    except sqlite3.IntegrityError as e:
+        print(f"Error: {e}")
+        success = False
+    finally:
+        cursor.close()
+        conn.close()
+
+    return success

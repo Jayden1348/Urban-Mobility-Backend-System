@@ -1,5 +1,5 @@
-from .generaltools import *  # Import utility functions like clear_screen and wait
-from Logic import scooter_logic  # Import scooter logic functions
+from .generaltools import *  
+from Logic import scooter_logic  
 from datetime import datetime
 
 def search_scooter_info():
@@ -7,111 +7,193 @@ def search_scooter_info():
     Handles searching for scooter information.
     """
     search_key = input("Enter serial number or model to search: ").strip()  # Get search key
-    results = scooter_logic.search_scooter(search_key)  # Call logic to search scooters
-    if results:  # If results are found
+    serial_number = search_scooter_by_serial_number(search_key)  
+    if serial_number is None:  
+        print("\nNo scooter found with that serial number.")
+        input("Press Enter to continue...")
+        return
+    results = scooter_logic.search_scooter(serial_number)  
+    if results: 
         print("\nSearch Results:")
-        for scooter in results:  # Print each scooter in the results
+        for scooter in results:  
             print(scooter)
-    else:  # If no results are found
+    else:  
         print("\nNo scooters found.")
-    wait(2)  # Pause for 2 seconds
+    input("Press Enter to continue...") 
 
+def search_scooter_by_serial_number(serial_number):
+    scooter = scooter_logic.search_scooter(serial_number) 
+    if len(scooter) == 1:  # If scooter is found
+        return scooter[0].serial_number  # Return the serial number
+    if len(scooter) == 0:
+        print("\nNo scooter found with that serial number.")
+    if len(scooter) > 1:  # If multiple scooters are found
+        print("\nMultiple scooters found with that serial number:")
+        interaction = True 
+        while interaction:
+            for s in range(0,len(scooter)):
+                print(f"{s+1} - {scooter[s].serial_number} ({scooter[s].model})")
+            
+            selected_scooter = input("Select the scooter: ")
+            clear_screen()  
+            
+            if selected_scooter.isdigit() and 1 <= int(selected_scooter) <= len(scooter):
+                interaction = False
+                return scooter[int(selected_scooter) - 1].serial_number
+            
+            if selected_scooter.lower() == "b" or selected_scooter.lower() == "":
+                interaction = False
+                return None
+            print("\nInvalid selection. Please try again.")  # Prompt for valid selection
+  
 
 def update_scooter_info(user):
     """
-    Handles updating scooter information.
+    Handles updating scooter information based on user role, with validation.
     """
-    serial_number = input("Enter the serial number of the scooter to update: ").strip()  # Get serial number
-    updated_data = {}  # Initialize dictionary for updated data
-    print("Enter new values (leave blank to keep current value):")
-    updated_data["Brand"] = input("Brand: ").strip() or None  # Get new brand
-    updated_data["Model"] = input("Model: ").strip() or None  # Get new model
-    updated_data["SerialNumber"] = input("Serial Number: ").strip() or None  # Get new serial number
-    updated_data["TopSpeed"] = input("Top Speed (km/h): ").strip() or None  # Get new top speed
-    updated_data["BatteryCapacity"] = input("Battery Capacity (Wh): ").strip() or None  # Get new battery capacity
-    updated_data["StateOfCharge"] = input("State of Charge (%): ").strip() or None  # Get new state of charge
-    updated_data["TargetRangeSoCMin"] = input("Target Range SoC Min (%): ").strip() or None  # Get new min SoC
-    updated_data["TargetRangeSoCMax"] = input("Target Range SoC Max (%): ").strip() or None  # Get new max SoC
-    updated_data["Latitude"] = input("Latitude: ").strip() or None  # Get new latitude
-    updated_data["Longitude"] = input("Longitude: ").strip() or None  # Get new longitude
-    updated_data["OutOfService"] = input("Out of Service (0 = No, 1 = Yes): ").strip() or None  # Get new out-of-service status
-    updated_data["Mileage"] = input("Mileage (km): ").strip() or None  # Get new mileage
-    updated_data["LastMaintenanceDate"] = input("Last Maintenance Date (YYYY-MM-DD): ").strip() or None  # Get new maintenance date
-    updated_data["InServiceDate"] = None  # Get new in-service date
+    serial_number = input("Enter the serial number of the scooter to update: ").strip()
+    serial_number = search_scooter_by_serial_number(serial_number)
+    if serial_number is None:
+        print("\nNo scooter found with that serial number.")
+        input("Press any key to continue...")
+        return
+    
+    allowed_fields = scooter_logic.filter_update_data(user.user_role, {k: None for k in scooter_logic.field_types.keys()}).keys()
+    if user.user_role in (0,1):  # Super Admin or System Admin can update all fields
+        allowed_fields = scooter_logic.field_types.keys()
+    allowed_fields = list(allowed_fields)
+    
+    # remove so that the inservicedate cannot be updated
+    if "InServiceDate" in allowed_fields:
+        allowed_fields.remove("InServiceDate")
 
-    # Remove empty fields
-    updated_data = {k: v for k, v in updated_data.items() if v is not None}
-    errors = scooter_logic.validate_scooter_data(updated_data, True)  # Validate the updated data
-    if errors:  # If there are validation errors
-        print("\nValidation errors:")
-        for error in errors:  # Print each error
-            print(f"- {error}")
-        wait(10)  # Pause for 2 seconds
-        return  # Exit the function
-    # Filter updates based on user role
-    filtered_data = scooter_logic.filter_update_data(user.user_role, updated_data)
-    if not filtered_data:  # If no fields are allowed to be updated
-        print("\nYou do not have permission to update these fields.")
-        wait(2)
+    print("Enter new values (leave blank to keep current value):")
+    updated_data = {}
+    db_values = scooter_logic.get_scooter_by_serial_number(serial_number)  # Fetch current values from the database
+
+    for field in allowed_fields:
+        while True:
+            value = input(f"{field}: ").strip()
+            if value == "":
+                break  # Skip updating this field
+
+            extra_value = None
+            if field == "TargetRangeSoCMin":
+                extra_value = updated_data.get("TargetRangeSoCMax")
+            elif field == "TargetRangeSoCMax":
+                extra_value = updated_data.get("TargetRangeSoCMin")
+
+            converted_value, error = scooter_logic.validate_field_value(field, value, extra_value)
+            if error:
+                print(f"Error: {error}")
+            else:
+                updated_data[field] = converted_value
+                break
+
+            
+    if "TargetRangeSoCMin" in updated_data or "TargetRangeSoCMax" in updated_data:
+        min_value = updated_data.get("TargetRangeSoCMin", db_values.target_range_soc_min)
+        max_value = updated_data.get("TargetRangeSoCMax", db_values.target_range_soc_max)
+        if min_value is not None and max_value is not None and min_value > max_value:
+            print("Error: TargetRangeSoCMin cannot be greater than TargetRangeSoCMax.")
+            input("Press any key to continue...")
+            return
+        
+    if not updated_data:
+        print("\nNo updates provided.")
+        input("Press any key to continue...")
         return
 
-    # Call update logic
+    
+    filtered_data = scooter_logic.filter_update_data(user.user_role, updated_data)
+    if not filtered_data:
+        print("\nYou do not have permission to update these fields.")
+        input("Press any key to continue...")
+        return
+
+    
     result = scooter_logic.update_scooter(serial_number, filtered_data)
-    if result:  # If update is successful
+    if result:
         print("\nScooter updated successfully.")
-    else:  # If update fails
-        print("\nFailed to update scooter:")
-    wait(2)  # Pause for 2 seconds
+    else:
+        print("\nFailed to update scooter.")
+    input("Press any key to continue...")
 
 
 def add_scooter(user):
     """
     Handles adding a new scooter.
     """
-    if user.user_role == 2:  # Check if user is a Service Engineer
-        print("\nYou do not have permission to add scooters.")  # Restrict access
+    if user.user_role == 2: 
+        print("\nYou do not have permission to add scooters.") 
         wait(2)
         return
 
+    print("Enter the details for the new scooter:")
+    scooter_data = {}
+    required_fields = [
+        "Brand", "Model", "SerialNumber", "TopSpeed", "BatteryCapacity",
+        "StateOfCharge", "TargetRangeSoCMin", "TargetRangeSoCMax",
+        "Latitude", "Longitude", "OutOfService", "Mileage", "LastMaintenanceDate"
+    ]
     # Collect data for the new scooter
-    scooter_data = {
-        "Brand": input("Brand: ").strip(),
-        "Model": input("Model: ").strip(),
-        "SerialNumber": input("Serial Number: ").strip(),
-        "TopSpeed": float(input("Top Speed (km/h): ").strip()),
-        "BatteryCapacity": float(input("Battery Capacity (Wh): ").strip()),
-        "StateOfCharge": int(input("State of Charge (%): ").strip()),
-        "TargetRangeSoCMin": int(input("Target Range SoC Min (%): ").strip()),
-        "TargetRangeSoCMax": int(input("Target Range SoC Max (%): ").strip()),
-        "Latitude": float(input("Latitude: ").strip()),
-        "Longitude": float(input("Longitude: ").strip()),
-        "OutOfService": int(input("Out of Service (0 = No, 1 = Yes): ").strip()),
-        "Mileage": float(input("Mileage (km): ").strip()),
-        "LastMaintenanceDate": input("Last Maintenance Date (YYYY-MM-DD): ").strip(),
-        "InServiceDate": datetime.now().strftime("%Y-%m-%d"),
-    }
-    result = scooter_logic.add_scooter(scooter_data)  # Call add logic
-    if result:  # If addition is successful
-        print("\nScooter added successfully.")
-    else:  # If addition fails
-        print("\nFailed to add scooter:")
-        for error in result["errors"]:  # Print each error
-            print(f"- {error}")
-    wait(2)  # Pause for 2 seconds
+    for field in required_fields:
+        if field == "InServiceDate":  # Automatically set the in-service date
+            scooter_data[field] = datetime.now().strftime("%Y-%m-%d")
+            continue
 
+        while True:
+            value = input(f"{field}: ").strip()
+            if value == "":
+                print(f"{field} is required. Please provide a value.")
+                continue
+
+            # Validate the field value
+            converted_value, error = scooter_logic.validate_field_value(field, value)
+            if error:
+                print(f"Error: {error}")
+            else:
+                scooter_data[field] = converted_value
+                break
+    
+    min_value = scooter_data.get("TargetRangeSoCMin")
+    max_value = scooter_data.get("TargetRangeSoCMax")
+    if min_value is not None and max_value is not None and min_value > max_value:
+        print("Error: TargetRangeSoCMin cannot be greater than TargetRangeSoCMax.")
+        input("Press Enter to continue...")
+        return
+    
+    # Add the scooter to the database
+    scooter_data["InServiceDate"] = datetime.now().strftime("%Y-%m-%d")  
+    result = scooter_logic.add_scooter(scooter_data)
+    if result:
+        print("\nScooter added successfully.")
+    else:
+        print("\nFailed to add scooter. Please check the data and try again.")
+    input("Press Enter to continue...")  
 
 def delete_scooter(user):
     """
     Handles deleting a scooter.
     """
-    if user.user_role == 2:  # Check if user is a Service Engineer
-        print("\nYou do not have permission to delete scooters.")  # Restrict access
+    if user.user_role == 2:  
+        print("\nYou do not have permission to delete scooters.") 
         wait(2)
         return
 
-    serial_number = input("Enter the serial number of the scooter to delete: ").strip()  # Get serial number
-    if scooter_logic.delete_scooter(serial_number):  # Call delete logic
+    serial_number = input("Enter the serial number of the scooter to delete: ").strip()  
+    serial_number = search_scooter_by_serial_number(serial_number) 
+    if serial_number is None: 
+        print("\nNo scooter found with that serial number.")
+        input("Press Enter to continue...")
+        return
+    confirmation = input(f"Are you sure you want to delete the scooter with serial number: {serial_number}? (y/n): ").strip().lower()  # Confirm deletion
+    if confirmation != 'y': 
+        print("\nDeletion cancelled.")
+        input("Press Enter to continue...")
+        return
+    if scooter_logic.delete_scooter(serial_number): 
         print("\nScooter deleted successfully.")
-    else:  # If deletion fails
+    else:  
         print("\nFailed to delete scooter.")
-    wait(2)  # Pause for 2 seconds
+    input("Press Enter to continue...") 
