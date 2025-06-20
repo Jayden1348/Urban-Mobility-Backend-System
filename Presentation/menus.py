@@ -21,13 +21,13 @@ def super_admin_menu(user):  # DONE
             scooter_functions(user)
 
         elif choice == "2":
-            traveller_functions()
+            traveller_functions(user)
 
         elif choice == "3":
-            service_engineer_functions()
+            service_engineer_functions(user)
 
         elif choice == "4":
-            system_admin_functions()
+            system_admin_functions(user)
 
         elif choice == "5":
             backend_system_functions(user)
@@ -62,13 +62,13 @@ def system_admin_menu(user):  # DONE
         clear_screen()
 
         if choice == "1":
-            scooter_functions()
+            scooter_functions(user)
 
         elif choice == "2":
-            traveller_functions()
+            traveller_functions(user)
 
         elif choice == "3":
-            service_engineer_functions()
+            service_engineer_functions(user)
 
         elif choice == "4":
             backend_system_functions(user)

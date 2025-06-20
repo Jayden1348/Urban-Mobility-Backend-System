@@ -1,8 +1,8 @@
 from .generaltools import *
-from Logic import account_logic, user_logic
+from Logic import account_logic, user_logic, logs_logic
 
 
-def add_user(rolenum):
+def add_user(user, rolenum):
     while True:
         clear_screen()
         print(
@@ -40,6 +40,8 @@ Last name: {last_name}\n
             username, temp_password, first_name, last_name, rolenum)
         if success:
             print(f"\n{'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'} successfully created.")
+            logs_logic.new_log(
+                user.username, "Added user", f"{user.username} added {username} as a {'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'}", 0)
             wait(2)
             print(f"{username}'s temporary password is: {temp_password}")
             wait(2)
@@ -50,7 +52,7 @@ Last name: {last_name}\n
             return
 
 
-def delete_user(rolenum):
+def delete_user(user, rolenum):
     while True:
         clear_screen()
         print(
@@ -83,6 +85,8 @@ def delete_user(rolenum):
         success = user_logic.delete_user(username)
         if success:
             print(f"\n{'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'} successfully deleted.")
+            logs_logic.new_log(
+                user.username, "Deleted user", f"{user.username} deleted {username}", 0)
             wait(2)
             return
         else:
@@ -91,7 +95,7 @@ def delete_user(rolenum):
             return
 
 
-def update_user(rolenum):
+def update_user(user, rolenum):
     while True:
         clear_screen()
         print(
@@ -177,6 +181,8 @@ Last name: {new_last_name}\n
                 if success:
                     print(
                         f"\n{'System Administrator' if rolenum == 1 else 'Service Engineer' if rolenum == 2 else 'Unknown Role'} successfully updated.")
+                    logs_logic.new_log(
+                        user.username, "Updated user", f"{user.username} updated {new_username}'s account", 0)
                     wait(2)
                     if change_password:
                         print(
