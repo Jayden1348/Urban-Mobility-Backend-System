@@ -11,11 +11,11 @@ def wait(waittime):
     time.sleep(waittime)
 
 
-def areyousure(message):
+def areyousure(message, added_info=""):
     while True:
         clear_screen()
         choice = input(
-            f"Are you sure you want to {message}? (y/n): ").strip().lower()
+            f"{added_info}Are you sure you want to {message}? (y/n): ").strip().lower()
         if choice in ("y", "yes"):
             clear_screen()
             return True

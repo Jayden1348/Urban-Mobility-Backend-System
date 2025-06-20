@@ -71,3 +71,55 @@ def update_password(user):
             print("\nUpdate failed, something went wrong.")
             wait(2)
             return
+
+
+def update_profile(user):
+    while True:
+        clear_screen()
+        print(f"Update profile for user: {user.username}\n")
+        print(f"Current first name: {user.first_name}")
+        print(f"Current last name:  {user.last_name}")
+
+        new_first_name = input(
+            "\nEnter new first name (or press Enter to keep current): ").strip()
+        new_last_name = input(
+            "Enter new last name (or press Enter to keep current): ").strip()
+
+        # Use current values if nothing entered
+        if not new_first_name:
+            new_first_name = user.first_name
+        if not new_last_name:
+            new_last_name = user.last_name
+
+        # If no changes, return
+        if new_first_name == user.first_name and new_last_name == user.last_name:
+            print("\nNo changes detected. Profile update cancelled.")
+            wait(2)
+            return
+
+        # Confirm changes
+        clear_screen()
+        print("\nYou are about to update your profile to:")
+        print(f"First name: {new_first_name}")
+        print(f"Last name: {new_last_name}")
+        if not areyousure("save these changes", f"New first name: {new_first_name}\nNew last name:  {new_last_name}\n"):
+            print("Profile update cancelled.")
+            wait(2)
+            return
+
+        # Update in database
+        success = account_logic.change_profile(
+            user.username,
+            new_first_name,
+            new_last_name,
+        )
+        if success:
+            print("\nProfile updated successfully.")
+            user.first_name = new_first_name
+            user.last_name = new_last_name
+            wait(2)
+            return
+        else:
+            print("\nUpdate failed, something went wrong.")
+            wait(2)
+            return

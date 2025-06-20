@@ -91,29 +91,30 @@ def system_admin_menu(user):
 
 
 def service_engineer_menu(user):
-    print("Main Menu (System Engineer)\n")
-    print("1. Search scooter info")
-    print("2. Update scooter info")
-    print("3. My account")
-    print("4. Log out")
-    choice = input("\nSelect an option (1-4): ").strip().lower()
-    clear_screen()
-
-    if choice == "1":
-        pass
-        # Search scooter info
-    elif choice == "2":
-        pass
-        # Update SOME (not all) scooter info
-        # Servcie engineer can only change: state_of_charge, target_range_soc_min, target_range_soc_max, latitude, longitude, out_of_service, mileage, in_service_date
-        # Service engineer can NOT change: brand, model, serial_number, top_speed, battery_capacity
-    elif choice == "3":
-        account_functions(user)
-
-    elif choice == "4" or choice == "b":
-        if areyousure("log out"):
-            return
-    else:
-        print("\nInvalid option. Please try again.")
-        wait(2)
+    while True:
+        print("Main Menu (System Engineer)\n")
+        print("1. Search scooter info")
+        print("2. Update scooter info")
+        print("3. My account")
+        print("4. Log out")
+        choice = input("\nSelect an option (1-4): ").strip().lower()
         clear_screen()
+
+        if choice == "1":
+            pass
+            # Search scooter info
+        elif choice == "2":
+            pass
+            # Update SOME (not all) scooter info
+            # Servcie engineer can only change: state_of_charge, target_range_soc_min, target_range_soc_max, latitude, longitude, out_of_service, mileage, in_service_date
+            # Service engineer can NOT change: brand, model, serial_number, top_speed, battery_capacity
+        elif choice == "3":
+            account_functions(user)
+
+        elif choice == "4" or choice == "b":
+            if areyousure("log out"):
+                return
+        else:
+            print("\nInvalid option. Please try again.")
+            wait(2)
+            clear_screen()

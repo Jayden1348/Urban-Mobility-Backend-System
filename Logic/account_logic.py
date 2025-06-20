@@ -79,3 +79,7 @@ def change_username(username, new_username):
 def change_password(username, new_password):
     # Sending to the Access layer to change password
     return DataAccess.update_item_from_table("Users", username, {"Password": new_password})
+
+
+def change_profile(username, new_first_name, new_last_name):
+    return DataAccess.update_item_from_table("Users", username, {"FirstName": new_first_name, "LastName": new_last_name})
