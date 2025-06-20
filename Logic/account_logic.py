@@ -83,3 +83,7 @@ def change_password(username, new_password):
 
 def change_profile(username, new_first_name, new_last_name):
     return DataAccess.update_item_from_table("Users", username, {"FirstName": new_first_name, "LastName": new_last_name})
+
+
+def delete_account(username):
+    return DataAccess.remove_item_from_table("Users", username)

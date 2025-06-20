@@ -177,8 +177,8 @@ def account_functions(user):  # Accessible by SystemAdmin & Service Engineer
         elif choice == "3":
             account_presentation.update_profile(user)
         elif choice == "4":
-            pass
-            # Delete account
+            if account_presentation.delete_account(user) == "LogOut":
+                return "LogOut"
         elif choice == "5" or choice == "b":
             return
         else:

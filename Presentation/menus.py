@@ -109,8 +109,8 @@ def service_engineer_menu(user):
             # Servcie engineer can only change: state_of_charge, target_range_soc_min, target_range_soc_max, latitude, longitude, out_of_service, mileage, in_service_date
             # Service engineer can NOT change: brand, model, serial_number, top_speed, battery_capacity
         elif choice == "3":
-            account_functions(user)
-
+            if account_functions(user) == "LogOut":
+                return
         elif choice == "4" or choice == "b":
             if areyousure("log out"):
                 return

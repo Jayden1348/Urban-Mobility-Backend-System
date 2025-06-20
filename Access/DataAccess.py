@@ -53,3 +53,28 @@ def update_item_from_table(table_name, identifier_value, new_values):
     cursor.close()
     conn.close()
     return success
+
+
+def remove_item_from_table(table_name, identifier_value):
+    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    if table_name not in allowed_tables:
+        raise ValueError("Invalid table name.")
+
+    primary_keys = {
+        'Users': "Username",
+        'Travellers': "DrivingLicenseNumber",
+        'Scooters': "SerialNumber",
+        'Logs': "LogID"
+    }
+    identifier = primary_keys[table_name]
+
+    query = f"DELETE FROM {table_name} WHERE {identifier} = ?"
+
+    conn = sqlite3.connect('ScooterApp.db')
+    cursor = conn.cursor()
+    cursor.execute(query, (identifier_value,))
+    conn.commit()
+    success = cursor.rowcount > 0  # True if at least one row was deleted
+    cursor.close()
+    conn.close()
+    return success

@@ -123,3 +123,40 @@ def update_profile(user):
             print("\nUpdate failed, something went wrong.")
             wait(2)
             return
+
+
+def delete_account(user):
+    while True:
+        clear_screen()
+        warning = f"Delete account for user: {user.username}\n\nWARNING: This action cannot be undone.\n"
+
+        if not areyousure("delete your account", warning):
+            print("Account deletion cancelled.")
+            wait(2)
+            return
+        while True:
+            clear_screen()
+            print(warning)
+            password = input(
+                "Enter your password to confirm deletion (or press Enter to cancel): ").strip()
+            if not password:
+                print("\nAccount deletion cancelled.")
+                wait(2)
+                return
+
+            if not account_logic.validate_password(user.username, password):
+                print("\nPassword is incorrect.")
+                wait(2)
+                continue
+
+            if account_logic.delete_account(user.username):
+                print("\nAccount deleted successfully.")
+                wait(2)
+                print("\nLogging out. Goodbye!")
+                wait(2)
+                return "LogOut"
+            else:
+
+                print("\nAccount deletion failed, something went wrong.")
+                wait(2)
+                return
