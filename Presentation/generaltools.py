@@ -25,3 +25,16 @@ def areyousure(message, added_info=""):
         else:
             print("\nPlease enter 'y' or 'n'.")
             time.sleep(2)
+
+
+def areyousure_custommessage(message):
+    while True:
+        clear_screen()
+        choice = input(message).strip().lower()
+        if choice in ("y", "yes"):
+            return True
+        elif choice in ("n", "no"):
+            return False
+        else:
+            print("\nPlease enter 'y' or 'n'.")
+            time.sleep(2)

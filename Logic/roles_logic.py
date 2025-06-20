@@ -19,3 +19,7 @@ def get_role_by_username(username, rolenum):
 
 def delete_role(username):
     return DataAccess.remove_item_from_table("Users", username)
+
+
+def update_role(old_username, new_username, new_password, new_firstname, new_lastname):
+    return DataAccess.update_item_from_table("Users", old_username, {"Username": new_username, "Password": new_password, "FirstName": new_firstname, "LastName": new_lastname})

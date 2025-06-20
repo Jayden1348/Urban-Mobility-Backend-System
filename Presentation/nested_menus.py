@@ -64,7 +64,7 @@ def traveller_functions():  # Accessible by SuperAdmin & SystemAdmin
             wait(2)
 
 
-def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
+def service_engineer_functions():   # DONE Accessible by SuperAdmin & SystemAdmin
     while True:
         clear_screen()
         print("Service engineer related functions:\n")
@@ -76,8 +76,7 @@ def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
         clear_screen()
 
         if choice == "1":
-            pass
-            # Update service engineer info (+ change/reset his password to temporary password)
+            roles_presentation.update_role(2)
         elif choice == "2":
             roles_presentation.add_role(2)
         elif choice == "3":
@@ -88,7 +87,7 @@ def service_engineer_functions():   # Accessible by SuperAdmin & SystemAdmin
             print("\nInvalid option. Please try again.")
 
 
-def system_admin_functions():  # Accessible only by SuperAdmin
+def system_admin_functions():       # DONE Accessible only by SuperAdmin
     while True:
         clear_screen()
         print("System admin related functions:\n")
@@ -100,8 +99,7 @@ def system_admin_functions():  # Accessible only by SuperAdmin
         clear_screen()
 
         if choice == "1":
-            pass
-            # Update system admin info (+ change/reset his password to temporary password)
+            roles_presentation.update_role(1)
         elif choice == "2":
             roles_presentation.add_role(1)
         elif choice == "3":
@@ -154,7 +152,7 @@ def backend_system_functions(user):
             wait(2)
 
 
-def account_functions(user):  # DONE Accessible by SystemAdmin & Service Engineer
+def account_functions(user):        # DONE Accessible by SystemAdmin & Service Engineer
     while True:
         clear_screen()
         print("Account functions:\n")
