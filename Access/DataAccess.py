@@ -33,7 +33,7 @@ def get_one_from_table(table_name, identifier_value):
 
     primary_keys = {
         'Users': "Username",
-        'Travellers': "DrivingLicenseNumber",
+        'Travellers': "CustomerID",
         'Scooters': "SerialNumber",
         'Logs': "LogID"
     }
@@ -67,7 +67,7 @@ def update_item_from_table(table_name, identifier_value, new_values):
 
     primary_keys = {
         'Users': "Username",
-        'Travellers': "DrivingLicenseNumber",
+        'Travellers': "CustomerID",
         'Scooters': "SerialNumber",
         'Logs': "LogID"
     }
@@ -95,7 +95,7 @@ def remove_item_from_table(table_name, identifier_value):
 
     primary_keys = {
         'Users': "Username",
-        'Travellers': "DrivingLicenseNumber",
+        'Travellers': "CustomerID",
         'Scooters': "SerialNumber",
         'Logs': "LogID"
     }
