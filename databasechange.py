@@ -70,18 +70,6 @@ def create_database():
     );
     """)
 
-    cursor.execute("""
-    CREATE TABLE Logs (
-        LogID INTEGER PRIMARY KEY AUTOINCREMENT,
-        Date DATE NOT NULL,
-        Time TIME NOT NULL,
-        Username TEXT,
-        Description TEXT NOT NULL,
-        AdditionalInfo TEXT,
-        Suspicious INTEGER NOT NULL CHECK(Suspicious IN (0, 1)) -- 0 = No, 1 = Yes
-    );
-    """)
-
     conn.commit()
     cursor.close()
     conn.close()
@@ -141,29 +129,7 @@ def seed_users():
     print("Users table seeded successfully.")
 
 
-def seed_logs():
-    logs = [
-        # (Date, Time, Username, Description, AdditionalInfo, Suspicious)
-        ("2021-05-12", "15:51:19", "john_m_05", "Logged in", None, 0),
-        ("2021-05-12", "18:00:20", "superadmin",
-         "New admin user is created", "username: mike12", 0),
-        ("2021-05-12", "18:05:33", None, "Unsuccessful login",
-         'username: "mike12" is used for a login attempt with a wrong password', 0),
-        ("2021-05-12", "18:07:10", None, "Unsuccessful login",
-         "Multiple usernames and passwords are tried in a row", 1),
-        ("2021-05-12", "18:08:02", "superadmin",
-         "User is deleted", 'User "mike12" is deleted', 0),
-    ]
-    query = """
-        INSERT INTO Logs (Date, Time, Username, Description, AdditionalInfo, Suspicious)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """
-    dbconnect(query, logs)
-    print("Logs table seeded successfully.")
-
-
 if __name__ == "__main__":
     create_database()
     seed_users()
     seed_scooters()
-    seed_logs()
