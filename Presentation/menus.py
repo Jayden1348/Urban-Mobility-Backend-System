@@ -1,16 +1,17 @@
-from .generaltools import *
+from .general_presentation import *
 from .nested_menus import *
 from . import logs_presentation, users_presentation
+from .scooter_presentation import *
 
 
-def super_admin_menu(user):  # DONE
+def super_admin_menu(user):
     while True:
         print("Main Menu (Super Admin)\n")
-        print("1. Scooter related functions")
-        print("2. Traveller related functions")
-        print("3. Service engineer related functions")
-        print("4. System Admin related functions")
-        print("5. Backend system related functions")
+        print("1. Scooter functions")
+        print("2. Traveller functions")
+        print("3. Service engineer functions")
+        print("4. System Admin functions")
+        print("5. System Backup functions")
         print("6. See logs")
         print("7. See users & roles")
         print("8. Log out")
@@ -18,42 +19,42 @@ def super_admin_menu(user):  # DONE
         clear_screen()
 
         if choice == "1":
-            scooter_functions(user)
+            scooter_functions(user)                 # Done
 
         elif choice == "2":
-            traveller_functions(user)
+            traveller_functions(user)               # Done 
 
         elif choice == "3":
-            service_engineer_functions(user)
+            user_functions(user, 2)                 # Done
 
         elif choice == "4":
-            system_admin_functions(user)
+            user_functions(user, 1)                 # Done
 
         elif choice == "5":
-            backend_system_functions(user)
+            system_backup_functions(user)
 
         elif choice == "6":
-            logs_presentation.show_all_logs()
+            logs_presentation.show_all_logs()       # Done
 
         elif choice == "7":
-            users_presentation.show_all_users()
+            users_presentation.show_all_users()     # Done
 
         elif choice == "8" or choice == "b":
-            if areyousure("log out"):
+            if boolean_confirmation("log out"):
                 return
         else:
             print("\nInvalid option. Please try again.")
-            wait(2)
+            wait(1.5)
             clear_screen()
 
 
-def system_admin_menu(user):  # DONE
+def system_admin_menu(user):
     while True:
         print("Main Menu (System Admin)\n")
-        print("1. Scooter related functions")
-        print("2. Traveller related functions")
-        print("3. Service engineer related functions")
-        print("4. Backend system related functions")
+        print("1. Scooter functions")
+        print("2. Traveller functions")
+        print("3. Service engineer functions")
+        print("4. System Backup functions")
         print("5. See logs")
         print("6. See users & roles")
         print("7. My account")
@@ -62,59 +63,58 @@ def system_admin_menu(user):  # DONE
         clear_screen()
 
         if choice == "1":
-            scooter_functions(user)
+            scooter_functions(user)                 # Done
 
         elif choice == "2":
-            traveller_functions(user)
+            traveller_functions(user)               # Done
 
         elif choice == "3":
-            service_engineer_functions(user)
+            user_functions(user, 2)                 # Done
 
         elif choice == "4":
-            backend_system_functions(user)
+            system_backup_functions(user)
 
         elif choice == "5":
-            logs_presentation.show_all_logs()
+            logs_presentation.show_all_logs()       # Done
         elif choice == "6":
-            users_presentation.show_all_users()
+            users_presentation.show_all_users()     # Done
 
         elif choice == "7":
-            account_functions(user)
-
+            if account_functions(user) == "LogOut": # Done
+                return
         elif choice == "8" or choice == "b":
-            if areyousure("log out"):
+            if boolean_confirmation("log out"):
                 return
         else:
             print("\nInvalid option. Please try again.")
-            wait(2)
+            wait(1.5)
             clear_screen()
 
 
-def service_engineer_menu(user):
+def service_engineer_menu(user):  # Done
     while True:
-        print("Main Menu (System Engineer)\n")
+        print(f"Main Menu (Service Engineer)\n")
         print("1. Search scooter info")
-        print("2. Update scooter info")
-        print("3. My account")
-        print("4. Log out")
-        choice = input("\nSelect an option (1-4): ").strip().lower()
+        print("2. Advanced scooter search")
+        print("3. Update scooter info")
+        print("4. My account")
+        print("5. Log out")
+        choice = input("\nSelect an option (1-5): ").strip().lower()
         clear_screen()
 
         if choice == "1":
-            pass
-            # Search scooter info
+            scooter_presentation.search_scooter()
         elif choice == "2":
-            pass
-            # Update SOME (not all) scooter info
-            # Servcie engineer can only change: state_of_charge, target_range_soc_min, target_range_soc_max, latitude, longitude, out_of_service, mileage, in_service_date
-            # Service engineer can NOT change: brand, model, serial_number, top_speed, battery_capacity
+            scooter_presentation.advanced_scooter_search()
         elif choice == "3":
+            scooter_presentation.update_scooter(user)
+        elif choice == "4":
             if account_functions(user) == "LogOut":
                 return
-        elif choice == "4" or choice == "b":
-            if areyousure("log out"):
+        elif choice == "5" or choice == "b":
+            if boolean_confirmation("log out"):
                 return
         else:
             print("\nInvalid option. Please try again.")
-            wait(2)
+            wait(1.5)
             clear_screen()

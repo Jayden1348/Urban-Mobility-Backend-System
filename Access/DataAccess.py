@@ -1,124 +1,171 @@
+from Utils.encryption import encryptor, ENCRYPTED_FIELDS
 import sqlite3
-from Models.DataModels import User, Traveller, Scooter, Log
+from Models.DataModels import User, Traveller, Scooter, RestoreCode
+
+PRIMARY_KEYS = {
+    'Users': "user_id",
+    'Travellers': "customer_id",
+    'Scooters': "scooter_id",
+    'RestoreCodes': "code_id"
+}
 
 
-def get_all_from_table(table_name):
-    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
-
+def search_item_in_table(table_name, search_value, identifiers=None, filters=None):
+    allowed_tables = ['Scooters', 'Travellers', 'Users', 'RestoreCodes']
     if table_name not in allowed_tables:
         raise ValueError("Invalid table name.")
 
     conn = sqlite3.connect('ScooterApp.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM {table_name}")
-    results = [dict(row) for row in cursor.fetchall()]
-    conn.close()
+    try:
+        params = []
+        encrypted_filters = {}
+        
+        # Check if ANY identifier is encrypted
+        has_encrypted_identifiers = False
+        if identifiers:
+            for field in identifiers:
+                if field in ENCRYPTED_FIELDS.get(table_name, []):
+                    has_encrypted_identifiers = True
+                    break
+            
 
-    model_map = {
-        'Users': User,
-        'Travellers': Traveller,
-        'Scooters': Scooter,
-        'Logs': Log
-    }
-    model_class = model_map[table_name]
-    objects = [model_class(**row) for row in results]
-    return objects
+        # Separate encrypted and non-encrypted filters
+        query_filter_conditions = []
+        if filters:
+            for field, value in filters.items():
+                if field not in ENCRYPTED_FIELDS.get(table_name, []):
+                    query_filter_conditions.append(f"{field} = ?")
+                    params.append(value)
+                else:
+                    encrypted_filters[field] = value
 
 
-def get_one_from_table(table_name, identifier_value):
-    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
-    if table_name not in allowed_tables:
-        raise ValueError("Invalid table name.")
+        query = f"SELECT * FROM {table_name}"
+        
+        if query_filter_conditions:
+            query += " WHERE " + " AND ".join(query_filter_conditions)
+        
 
-    primary_keys = {
-        'Users': "Username",
-        'Travellers': "CustomerID",
-        'Scooters': "SerialNumber",
-        'Logs': "LogID"
-    }
-    identifier = primary_keys[table_name]
+        # Only add search conditions to SQL if NO identifiers are encrypted
+        if not has_encrypted_identifiers and identifiers and search_value.strip():
+            search_conditions = []
+            for field in identifiers:
+                search_conditions.append(f"{field} LIKE ?")
+                params.append(f"%{search_value}%")
+            
+            if search_conditions:
+                if query_filter_conditions:
+                    query += " AND (" + " OR ".join(search_conditions) + ")"
+                else:
+                    query += " WHERE (" + " OR ".join(search_conditions) + ")"
+        
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        
+        # Create objects with decrypted data
+        model_map = {'Users': User, 'Travellers': Traveller, 'Scooters': Scooter, 'RestoreCodes': RestoreCode}
+        model_class = model_map[table_name]
+        all_objects = [model_class(**encryptor.decrypt_object_data(table_name, dict(row))) for row in rows]
 
-    conn = sqlite3.connect('ScooterApp.db')
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    query = f"SELECT * FROM {table_name} WHERE {identifier} = ?"
-    cursor.execute(query, (identifier_value,))
-    row = cursor.fetchone()
-    conn.close()
+        # Client-side filtering for encrypted filters
+        if encrypted_filters:
+            filtered_objects = []
+            for obj in all_objects:
+                filter_match = True
+                for field, value in encrypted_filters.items():
+                    if hasattr(obj, field):
+                        if str(value).lower() != str(getattr(obj, field)).lower():
+                            filter_match = False
+                            break
+                if filter_match:
+                    filtered_objects.append(obj)
+            all_objects = filtered_objects
 
-    if not row:
-        return None
+        # Client-side search for identifiers
+        if has_encrypted_identifiers and identifiers and search_value.strip():
+            filtered_objects = []
+            for obj in all_objects:
+                search_match = False
+                for field in identifiers:
+                        if search_value.lower() in str(getattr(obj, field)).lower():
+                            search_match = True
+                            break
+                if search_match:
+                    filtered_objects.append(obj)
+            all_objects = filtered_objects
+        return all_objects
 
-    model_map = {
-        'Users': User,
-        'Travellers': Traveller,
-        'Scooters': Scooter,
-        'Logs': Log
-    }
-    model_class = model_map[table_name]
-    return model_class(**dict(row))
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def update_item_from_table(table_name, identifier_value, new_values):
-    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    allowed_tables = ['Scooters', 'Travellers', 'Users', 'RestoreCodes']
     if table_name not in allowed_tables:
         raise ValueError("Invalid table name.")
 
-    primary_keys = {
-        'Users': "Username",
-        'Travellers': "CustomerID",
-        'Scooters': "SerialNumber",
-        'Logs': "LogID"
-    }
-    identifier = primary_keys[table_name]
+    if not new_values or not isinstance(new_values, dict):
+        raise ValueError("No values to insert or input is not a dictionary.")
+
+    identifier = PRIMARY_KEYS[table_name]
 
     set_changes = ", ".join([f"{col} = ?" for col in new_values.keys()])
     values = list(new_values.values())
     values.append(identifier_value)
 
     query = f"UPDATE {table_name} SET {set_changes} WHERE {identifier} = ?"
-
     conn = sqlite3.connect('ScooterApp.db')
     cursor = conn.cursor()
-    cursor.execute(query, values)
-    conn.commit()
-    success = cursor.rowcount > 0  # True if at least one row was updated
-    cursor.close()
-    conn.close()
+    try:
+        cursor.execute(query, values)
+        conn.commit()
+        success = cursor.rowcount > 0
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+        success = False
+    finally:
+        cursor.close()
+        conn.close()
     return success
 
+
 def remove_item_from_table(table_name, identifier_value):
-    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    allowed_tables = ['Scooters', 'Travellers', 'Users', 'RestoreCodes']
     if table_name not in allowed_tables:
         raise ValueError("Invalid table name.")
 
-    primary_keys = {
-        'Users': "Username",
-        'Travellers': "CustomerID",
-        'Scooters': "SerialNumber",
-        'Logs': "LogID"
-    }
-    identifier = primary_keys[table_name]
-
+    identifier = PRIMARY_KEYS[table_name]
     query = f"DELETE FROM {table_name} WHERE {identifier} = ?"
 
     conn = sqlite3.connect('ScooterApp.db')
     cursor = conn.cursor()
-    cursor.execute(query, (identifier_value,))
-    conn.commit()
-    success = cursor.rowcount > 0  # True if at least one row was deleted
-    cursor.close()
-    conn.close()
+    try:
+        cursor.execute(query, (identifier_value,))
+        conn.commit()
+        success = cursor.rowcount > 0  # True if at least one row was deleted
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+        success = False
+    finally:
+        cursor.close()
+        conn.close()
     return success
-
 
 
 def add_item_to_table(table_name, new_values):
 
-    allowed_tables = ['Logs', 'Scooters', 'Travellers', 'Users']
+    allowed_tables = ['Scooters', 'Travellers', 'Users', 'RestoreCodes']
     if table_name not in allowed_tables:
         raise ValueError("Invalid table name.")
+
+    if not new_values or not isinstance(new_values, dict):
+        raise ValueError("No values to insert or input is not a dictionary.")
 
     columns = ", ".join(new_values.keys())
     placeholders = ", ".join(["?"] * len(new_values))
@@ -131,14 +178,29 @@ def add_item_to_table(table_name, new_values):
     try:
         cursor.execute(query, values)
         conn.commit()
-        success = True
+        return cursor.lastrowid
 
     except sqlite3.Error as e:
         print(f"SQLite error: {e}")
-
-        success = False
+        return None
     finally:
         cursor.close()
         conn.close()
 
-    return success
+
+def clear_table(table_name):
+    allowed_tables = ['Scooters', 'Travellers', 'Users', 'RestoreCodes']
+    if table_name not in allowed_tables:
+        raise ValueError("Invalid table name.")
+    
+    conn = sqlite3.connect('ScooterApp.db')
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute(f"DELETE FROM {table_name}")
+        conn.commit()
+    except sqlite3.Error as e:
+        print(f"Warning: Could not clear {table_name} table: {e}")
+    finally:
+        cursor.close()
+        conn.close()

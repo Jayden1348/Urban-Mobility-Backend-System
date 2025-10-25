@@ -1,29 +1,58 @@
 from Access import DataAccess
-from datetime import date
+from Logic import general_logic, account_logic, backup_logic
+from Utils.encryption import encryptor
 
 
-def add_user(username, password, firstname, lastname, rolenum):
-    today_str = date.today().isoformat()
-    return DataAccess.add_item_to_table("Users", {"Username": username, "Password": password,
-                                                  "FirstName": firstname, "LastName": lastname, "UserRole": rolenum, "RegistrationDate": today_str})
+
+def get_user(search_key="", identifiers=None, filters=None):
+    if identifiers is None:
+        identifiers = ["user_id", "username", "first_name", "last_name"]
+    return DataAccess.search_item_in_table(
+        "Users", search_key, identifiers=identifiers, filters=filters)
 
 
-def get_user_by_username(username, rolenum):
-    user = DataAccess.get_one_from_table("Users", username)
-    if not user:
-        return None
-    if user.user_role != rolenum:
-        return None
-    return user
+def add_user(new_user_data):
+    new_user_data["registration_date"] = general_logic.get_today_date()
+    new_user_data["password"] = account_logic.hash_password(new_user_data["password"])
+
+    return DataAccess.add_item_to_table("Users", encryptor.encrypt_object_data("Users", new_user_data))
 
 
-def get_all_users():
-    return DataAccess.get_all_from_table("Users")
+def update_user(user_id, updated_user_data):
+    return DataAccess.update_item_from_table("Users", user_id, encryptor.encrypt_object_data("Users", updated_user_data))
 
 
-def delete_user(username):
-    return DataAccess.remove_item_from_table("Users", username)
+def delete_user(user_id, del_related_data=False):
+    success = DataAccess.remove_item_from_table("Users", user_id)
+    
+    if success and del_related_data:
+        restore_codes_delete = backup_logic.get_restore_code(identifiers=[], filters={"generated_for_user_id": user_id})
+        for code in restore_codes_delete:
+            backup_logic.delete_restore_code(code)
+        
+    return success
 
 
-def update_user(old_username, new_username, new_password, new_firstname, new_lastname):
-    return DataAccess.update_item_from_table("Users", old_username, {"Username": new_username, "Password": new_password, "FirstName": new_firstname, "LastName": new_lastname})
+def reset_password(user_id, new_password):
+    return DataAccess.update_item_from_table(
+        "Users", user_id, {"password": account_logic.hash_password(new_password)})
+
+
+# Validation for new user values
+def validate_new_user_values(field, v):
+    if field == "username":
+        is_valid, errormsg = account_logic.check_new_username(v.lower())
+        if is_valid:
+            return True, v.lower()
+        else:
+            return False, errormsg
+
+    if field in ["first_name", "last_name"]:
+        if len(v) <= 25:
+            if general_logic.validate_char_string(v, letters=True, numbers=False, others=" -'"):
+                return True, v.title()
+            return False, "Only letters, spaces, and - are allowed."
+        return False, "Maximum length is 25 characters."    
+
+    return False, "The value entered does not meet the criteria for this field."
+

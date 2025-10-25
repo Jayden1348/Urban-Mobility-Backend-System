@@ -3,34 +3,22 @@ from datetime import datetime
 from Models.DataModels import Log
 
 
-def get_all_logs():
+def get_log(filters):
     logs = []
-    try:
-        for row in LogAccess.read_encrypted_logs_csv():
-            log = Log(int(row[0]), row[1], row[2],
-                      row[3], row[4], row[5], int(row[6]))
-            logs.append(log)
-        return logs
-    except Exception as e:
-        return e
+    for row in LogAccess.read_encrypted_logs_csv():
+        log = Log(row[0], row[1],
+                  row[2], row[3], row[4], int(row[5]) if row[5].isdigit() else "-")
+        logs.append(log)
+    if filters:
+        for key, value in filters.items():
+            logs = [log for log in logs if getattr(log, key) == value]
+    return logs
 
 
-def get_next_log_id():
-    logs = list(LogAccess.read_encrypted_logs_csv())
-    if not logs:
-        return 1
-    last_log = logs[-1]
-    try:
-        return int(last_log[0]) + 1
-    except (IndexError, ValueError):
-        return 1
-
-
-def new_log(username, description, additionalinfo, suspicious):
+def new_log(username, description, additionalinfo, suspicious=0):
     now = datetime.now()
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%H:%M:%S")
-    log_id = get_next_log_id()
-    log_row = [log_id, date_str, time_str, username,
+    log_row = [date_str, time_str, username,
                description, additionalinfo, suspicious]
     LogAccess.write_encrypted_log_csv(log_row)

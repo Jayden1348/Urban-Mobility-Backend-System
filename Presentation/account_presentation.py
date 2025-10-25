@@ -1,168 +1,180 @@
-from .generaltools import *
-from Logic import account_logic, logs_logic
+from .general_presentation import *
+from Logic import logs_logic, user_logic, account_logic
+import copy, time, getpass
+
+user_fields = ["username", "first_name", "last_name"]
 
 
-def update_username(user):
-    while True:
+
+def update_account(user):   # Done
+    old_userprofile = copy.deepcopy(user)
+    changes = get_object_values(user_fields, "user", old_object=old_userprofile)
+
+    if not changes:
         clear_screen()
-        print(f"Your current username is {user.username}\n")
+        print("No changes made. Cancelling...")
 
-        new_username = input(
-            "Enter your new username (or press Enter to cancel): ").strip().lower()
-        if not new_username:
-            print("\nUsername update cancelled.")
-            wait(2)
-            return
-        checkresult = account_logic.check_new_username(user, new_username)
-        if checkresult:
-            print(f"\nUsername not correct: {checkresult}")
-            wait(2)
-            continue
+    else:
+        if boolean_confirmation("update your profile", f"You are about to update your profile.\n\n"):
+            if user_logic.update_user(user.user_id, changes):
+                logs_logic.new_log(user.username, "Updated profile",
+                                   f"{user.username} updated their profile")
+                print("\nProfile updated successfully.")
 
-        if account_logic.change_username(user.username, new_username):
-            print(f"\nUsername successfully changed to: {new_username}")
-            logs_logic.new_log(user.username, "Updated username",
-                               f"{user.username} changed his username to {new_username}", 0)
-            wait(2)
-            user.username = new_username
-            return
-        else:
-            print(f"\nUpdate failed, something went wrong")
-            wait(2)
-            return
-
-
-def update_password(user):
-    while True:
-        clear_screen()
-        print(f"Change password for user: {user.username}\n")
-
-        current_password = input(
-            "Enter your current password (or press Enter to cancel): ").strip()
-        if not current_password:
-            print("\nPassword update cancelled.")
-            wait(2)
-            return
-
-        if not account_logic.validate_password(user.username, current_password):
-            print("\nCurrent password is incorrect.")
-            wait(2)
-            continue
-
-        while True:
-            clear_screen()
-            new_password = input("\nEnter your new password: ").strip()
-            confirm_password = input("Confirm your new password: ").strip()
-            if new_password != confirm_password:
-                print("\nPasswords do not match. Please try again.")
-                wait(2)
-                continue
-            checkresult = account_logic.check_new_password(new_password)
-            if checkresult:
-                print(f"\n{checkresult}. Please try again.")
-                wait(2)
-                continue
-            break
-
-        if account_logic.change_password(user.username, new_password):
-            print("\nPassword successfully changed.")
-            logs_logic.new_log(user.username, "Updated password", None, 0)
-            wait(2)
-            user.password = new_password
-            return
-        else:
-            print("\nUpdate failed, something went wrong.")
-            wait(2)
-            return
-
-
-def update_profile(user):
-    while True:
-        clear_screen()
-        print(f"Update profile for user: {user.username}\n")
-        print(f"Current first name: {user.first_name}")
-        print(f"Current last name:  {user.last_name}")
-
-        new_first_name = input(
-            "\nEnter new first name (or press Enter to keep current): ").strip().capitalize()
-        new_last_name = input(
-            "Enter new last name (or press Enter to keep current): ").strip().capitalize()
-
-        # Use current values if nothing entered
-        if not new_first_name:
-            new_first_name = user.first_name
-        if not new_last_name:
-            new_last_name = user.last_name
-
-        # If no changes, return
-        if new_first_name == user.first_name and new_last_name == user.last_name:
-            print("\nNo changes detected. Profile update cancelled.")
-            wait(2)
-            return
-
-        # Confirm changes
-        clear_screen()
-        print("\nYou are about to update your profile to:")
-        print(f"First name: {new_first_name}")
-        print(f"Last name: {new_last_name}")
-        if not areyousure("save these changes", f"New first name: {new_first_name}\nNew last name:  {new_last_name}\n"):
-            print("Profile update cancelled.")
-            wait(2)
-            return
-
-        # Update in database
-        success = account_logic.change_profile(
-            user.username,
-            new_first_name,
-            new_last_name,
-        )
-        if success:
-            print("\nProfile updated successfully.")
-            logs_logic.new_log(user.username, "Updated profile", None, 0)
-            user.first_name = new_first_name
-            user.last_name = new_last_name
-            wait(2)
-            return
-        else:
-            print("\nUpdate failed, something went wrong.")
-            wait(2)
-            return
-
-
-def delete_account(user):
-    while True:
-        clear_screen()
-        warning = f"Delete account for user: {user.username}\n\nWARNING: This action cannot be undone.\n"
-
-        if not areyousure("delete your account", warning):
-            print("Account deletion cancelled.")
-            wait(2)
-            return
-        while True:
-            clear_screen()
-            print(warning)
-            password = input(
-                "Enter your password to confirm deletion (or press Enter to cancel): ").strip()
-            if not password:
-                print("\nAccount deletion cancelled.")
-                wait(2)
-                return
-
-            if not account_logic.validate_password(user.username, password):
-                print("\nPassword is incorrect.")
-                wait(2)
-                continue
-
-            if account_logic.delete_account(user.username):
-                print("\nAccount deleted successfully.")
-                logs_logic.new_log(user.username, "Deleted user",
-                                   f"{user.username} deleted his own account", 0)
-                wait(2)
-                print("\nLogging out. Goodbye!")
-                wait(2)
-                return "LogOut"
+                for field, new_value in changes.items():
+                    setattr(user, field, new_value)
             else:
+                logs_logic.new_log(user.username, "Failed update",
+                                   f"{user.username} tried to update their profile.")
+                print("\nFailed to update profile. Please try again later.")
+        else:
+            print("Profile update cancelled.")
+    wait(2)
 
-                print("\nAccount deletion failed, something went wrong.")
+
+def update_password(user):  # Done
+    if not identity_verification(user):
+        return
+    
+    while True:
+        clear_screen()
+        new_password = getpass.getpass("Enter new password: ").strip()
+        if not new_password:
+            return
+        
+        confirm_password = getpass.getpass("Confirm new password: ").strip()
+        if new_password != confirm_password:
+            print("\nPasswords do not match. Please try again.")
+            wait(2)
+            continue
+        
+        is_valid, message = account_logic.validate_new_password(new_password, user.password)
+        if not is_valid:
+            print(f"\nPassword validation failed:\n{message}")
+            wait(5)
+            continue
+        break
+
+    ## Update Password
+    update_password_data = {"password": account_logic.hash_password(new_password)}
+    if user_logic.update_user(user.user_id, update_password_data):
+        user.password = update_password_data["password"]
+        logs_logic.new_log(user.username, "Updated password",
+                           f"{user.username} updated their password")
+        print("\nPassword updated successfully.")
+    else:
+        logs_logic.new_log(user.username, "Failed password update",
+                           f"{user.username} tried to update their password.")
+        print("\nFailed to update password. Please try again later.")
+    wait(2)
+
+
+def delete_account(user):   # Done
+    warning = f"⚠️  DELETE ACCOUNT⚠️\nTHIS ACTION CANNOT BE UNDONE!\n\n"
+    
+    if not identity_verification(user, warning):
+        return
+
+    while True:
+        print(warning)
+        confirmation_input = input("Please type 'DELETE' to confirm account deletion (or press Enter to cancel): ")
+        if confirmation_input == "DELETE":
+            break
+        elif confirmation_input == "":
+            return
+        else:
+            print("\nIncorrect input. Please type 'DELETE' or press Enter.")
+            wait(2)
+        clear_screen()
+
+    # Final confirmation after password success
+    if boolean_confirmation("delete your account", f"{warning}\nFinal Warning: You are about to permanently delete your account and all associated data.\n"):
+        if user_logic.delete_user(user.user_id, account_logic.get_role_num(user.user_role) == 1):
+            logs_logic.new_log(user.username, "Deleted account", 
+                            f"{user.username} deleted their own account")
+            print("Account deleted successfully. Logging out...")
+            wait(2)
+            return "LogOut"
+        else:
+            logs_logic.new_log(user.username, "Failed account deletion", 
+                            f"{user.username} tried to delete their own account")
+            print("Failed to delete account. Please try again later.")
+    
+
+
+
+LOGIN_COOLDOWN = 0
+LOGIN_COOLDOWN_SECONDS = 60
+TOTAL_FAILED_ATTEMPTS = 0
+MAX_ATTEMPTS = 5
+
+def identity_verification(user=None, extra_message=""): # Done
+    global LOGIN_COOLDOWN, TOTAL_FAILED_ATTEMPTS
+    
+    if LOGIN_COOLDOWN > 0:
+        remaining_cooldown = LOGIN_COOLDOWN - time.time()
+        if remaining_cooldown > 0:
+            print(f"❌ Identity Verification temporarily disabled. Please wait {int(remaining_cooldown)} seconds.")
+            wait(2)
+            return
+        else:
+            LOGIN_COOLDOWN = 0
+
+    show_message = extra_message + "\nIdentity Verification\n"
+
+    if TOTAL_FAILED_ATTEMPTS < MAX_ATTEMPTS:
+        remaining_attempts = MAX_ATTEMPTS - TOTAL_FAILED_ATTEMPTS
+    else:
+        remaining_attempts = 1
+    
+    for attempt in range(remaining_attempts):
+        clear_screen()
+        print(show_message)
+
+        if user is None:
+            username = input("Username: ")
+            if not username:
+                return
+        else:
+            username = user.username
+            print(f"Username: {username}")
+        password = getpass.getpass("\nEnter password (hidden for privacy): ")
+
+        if not password:
+            return
+        
+        if user is None:
+            user, validation_success = account_logic.verify_password_username(username, password)
+        else:
+            validation_success = account_logic.verify_password(user.password, password)
+
+        if validation_success:
+            TOTAL_FAILED_ATTEMPTS = 0
+            clear_screen()
+            return user
+        else:
+            TOTAL_FAILED_ATTEMPTS += 1
+
+            
+            if TOTAL_FAILED_ATTEMPTS <= MAX_ATTEMPTS:
+                remaining = MAX_ATTEMPTS - TOTAL_FAILED_ATTEMPTS
+                if remaining > 0:
+                    logs_logic.new_log(None, "Failed identity verification", f"Username: '{user.username if user else username}' failed a verification attempt (Total: {TOTAL_FAILED_ATTEMPTS})", 1 if TOTAL_FAILED_ATTEMPTS >= 3 else 0)
+                    print(f"\n❌ Incorrect password. {remaining} attempts remaining.")
+                    wait(2)
+                    
+                else:
+                    LOGIN_COOLDOWN = time.time() + LOGIN_COOLDOWN_SECONDS
+                    print(f"\n❌ Too many failed attempts. Please wait {LOGIN_COOLDOWN_SECONDS} seconds before trying again.")
+                    logs_logic.new_log(None, "User lockout", f"Username: '{user.username if user else username}' has been locked out after {TOTAL_FAILED_ATTEMPTS} failed verification attempts.", 1)
+                    wait(2)
+                    return
+            else:
+                cooldown_multiplier = TOTAL_FAILED_ATTEMPTS - MAX_ATTEMPTS
+                escalated_cooldown = LOGIN_COOLDOWN_SECONDS * (2 ** cooldown_multiplier)
+                LOGIN_COOLDOWN = time.time() + escalated_cooldown
+                print(f"\n❌ Incorrect password. Please wait {int(escalated_cooldown)} seconds before trying again.")
                 wait(2)
                 return
+    
+    return

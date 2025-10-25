@@ -1,80 +1,89 @@
-from datetime import datetime
 
 
 class User:
-    def __init__(self, Username, Password, FirstName, LastName, UserRole, RegistrationDate):
-        self.username = Username
-        self.password = Password
-        self.first_name = FirstName
-        self.last_name = LastName
-        self.user_role = UserRole  # 0 = Super Admin, 1 = System Admin, 2 = Service Engineer
-        self.registration_date = RegistrationDate
+    def __init__(self, user_id, username, password, first_name, last_name, user_role, registration_date):
+        self.user_id = user_id
+        self.username = username
+        self.password = password
+        self.first_name = first_name
+        self.last_name = last_name
+        self.user_role = "Super Admin" if user_role == 0 else "System Admin" if user_role == 1 else "Service Engineer" if user_role == 2 else "Unknown Role"
+        self.registration_date = registration_date
 
     def __repr__(self):
-        return f"User(username={self.username}, role={self.user_role})"
+        return str(self.user_id)
 
 
 class Traveller:
     def __init__(
-        self, CustomerID, FirstName, LastName, DateOfBirth, Gender, StreetName, HouseNumber,
-        ZipCode, City, EmailAddress, MobilePhone, DrivingLicenseNumber, RegistrationDate
+        self, customer_id, first_name, last_name, date_of_birth, gender, street_name, house_number,
+        zip_code, city, email_address, mobile_phone, driving_license_number, registration_date
     ):
-        self.customerID = CustomerID
-        self.first_name = FirstName
-        self.last_name = LastName
-        self.date_of_birth = DateOfBirth
-        self.gender = Gender
-        self.street_name = StreetName
-        self.house_number = HouseNumber
-        self.zip_code = ZipCode
-        self.city = City
-        self.email_address = EmailAddress
-        self.mobile_phone = MobilePhone
-        self.driving_license_number = DrivingLicenseNumber
-        self.registration_date = RegistrationDate
+        self.customer_id = customer_id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.date_of_birth = date_of_birth
+        self.gender = "Female" if gender == 1 else "Male"
+        self.street_name = street_name
+        self.house_number = house_number
+        self.zip_code = zip_code
+        self.city = city
+        self.email_address = email_address
+        self.mobile_phone = mobile_phone
+        self.driving_license_number = driving_license_number
+        self.registration_date = registration_date
 
     def __repr__(self):
-        return f"Traveller({self.first_name} {self.last_name}, {self.city})"
+        return str(self.customer_id)
 
 
 class Scooter:
     def __init__(
-        self, Brand, Model, SerialNumber, TopSpeed, BatteryCapacity, StateOfCharge,
-        TargetRangeSoCMin, TargetRangeSoCMax, Latitude, Longitude, OutOfService,
-        Mileage, LastMaintenanceDate, InServiceDate
+        self, scooter_id, brand, model, serial_number, top_speed, battery_capacity, state_of_charge,
+        target_range_soc_min, target_range_soc_max, latitude, longitude, out_of_service,
+        mileage, last_maintenance_date, in_service_date
     ):
-        self.brand = Brand
-        self.model = Model
-        self.serial_number = SerialNumber
-        self.top_speed = TopSpeed
-        self.battery_capacity = BatteryCapacity
-        self.state_of_charge = StateOfCharge
-        self.target_range_soc_min = TargetRangeSoCMin
-        self.target_range_soc_max = TargetRangeSoCMax
-        self.latitude = Latitude
-        self.longitude = Longitude
-        self.out_of_service = OutOfService
-        self.mileage = Mileage
-        self.last_maintenance_date = LastMaintenanceDate
-        self.in_service_date = InServiceDate
-
+        self.scooter_id = scooter_id
+        self.brand = brand
+        self.model = model
+        self.serial_number = serial_number
+        self.top_speed = top_speed
+        self.battery_capacity = battery_capacity
+        self.state_of_charge = state_of_charge
+        self.target_range_soc = f"{target_range_soc_min} - {target_range_soc_max}"
+        self.latitude = f"{float(latitude):.5f}"
+        self.longitude = f"{float(longitude):.5f}"
+        self.out_of_service = "Yes" if out_of_service == 1 else "No"
+        self.mileage = mileage
+        self.last_maintenance_date = last_maintenance_date
+        self.in_service_date = in_service_date
+    
     def __repr__(self):
-        return f"Scooter({self.brand} {self.model}, SN={self.serial_number})"
+        return str(self.scooter_id)
 
 
 class Log:
     def __init__(
-        self, LogID, Date, Time, Username, Description, AdditionalInfo, Suspicious
+        self, date, time, username, description, additional_info, suspicious
     ):
-        self.log_id = LogID
-        self.date = Date
-        self.time = Time
-        self.username = Username
-        self.description = Description
-        self.additional_info = AdditionalInfo
-        self.suspicious = Suspicious  # 0 = No, 1 = Yes
+        self.date = date
+        self.time = time
+        self.username = username
+        self.description = description
+        self.additional_info = additional_info
+        self.suspicious = "Yes" if suspicious == 1 else ("No" if suspicious == 0 else "-")
 
     def __repr__(self):
-        return (f"Log(log_id={self.log_id}, date={self.date}, time={self.time}, "
+        return (f"date={self.date}, time={self.time}, "
                 f"username={self.username}, description={self.description}, "
                 f"additional_info={self.additional_info}, suspicious={self.suspicious})")
+
+class RestoreCode:
+    def __init__(self, code_id, generated_for_user_id, backup_filename, restore_code):
+        self.code_id = code_id
+        self.generated_for_user_id = generated_for_user_id
+        self.backup_filename = backup_filename
+        self.restore_code = restore_code
+
+    def __repr__(self):
+        return str(self.code_id)
