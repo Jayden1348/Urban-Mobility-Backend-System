@@ -6,14 +6,14 @@ from Utils.encryption import encryptor
 CITIES = ["Rotterdam", "Amsterdam", "Utrecht", "Eindhoven", "Groningen", "Maastricht", "Delft", "Leiden", "Nijmegen", "Haarlem"]
 
 
-def get_traveller(search_key="", identifiers=None, filters=None):  # Done
+def get_traveller(search_key="", identifiers=None, filters=None):
     if identifiers is None:
         identifiers = ["customer_id", "first_name", "last_name", "email_address"]
     return DataAccess.search_item_in_table(
         "Travellers", search_key, identifiers=identifiers, filters=filters)
 
 
-def add_traveller(new_traveller_data):  # Done
+def add_traveller(new_traveller_data):
     if "gender" in new_traveller_data:
         new_traveller_data["gender"] = 1 if new_traveller_data["gender"] == "Female" else 0
     new_traveller_data["registration_date"] = general_logic.get_today_date()
@@ -21,19 +21,19 @@ def add_traveller(new_traveller_data):  # Done
     return DataAccess.add_item_to_table("Travellers", encryptor.encrypt_object_data("Travellers", new_traveller_data))
 
 
-def update_traveller(customer_id, updated_traveller_data):    # Done
+def update_traveller(customer_id, updated_traveller_data):
     if "gender" in updated_traveller_data:
         updated_traveller_data["gender"] = 1 if updated_traveller_data["gender"] == "Female" else 0
 
     return DataAccess.update_item_from_table("Travellers", customer_id, encryptor.encrypt_object_data("Travellers", updated_traveller_data))
 
 
-def delete_traveller(customer_id):   # Done
+def delete_traveller(customer_id):
     return DataAccess.remove_item_from_table("Travellers", customer_id)
 
 
 # Validation for new traveller values
-def validate_new_traveller_values(field, v):    # Done
+def validate_new_traveller_values(field, v):
     if field in ["first_name", "last_name"]:
         if len(v) <= 25:
             if general_logic.validate_char_string(v, letters=True, numbers=False, others=" -'"):

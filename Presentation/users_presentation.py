@@ -7,12 +7,12 @@ import pyperclip
 change_user_fields = ["username", "first_name", "last_name"]
 display_user_fields = ["user_id"] + change_user_fields + ["user_role", "registration_date"]
 
-def search_user(rolenum=None): # Done
+def search_user(rolenum=None):
     filters = {"user_role": rolenum} if rolenum is not None else None
     display_objects_table(display_user_fields, "user", selection=False, filters=filters)
 
 
-def add_user(user, rolenum=None): # Done
+def add_user(user, rolenum=None):
     new_user_dict = get_object_values(
         change_user_fields, "user")
 
@@ -38,7 +38,7 @@ def add_user(user, rolenum=None): # Done
             wait(2)
 
 
-def update_user(user, rolenum=None): # Done
+def update_user(user, rolenum=None):
     filters = {"user_role": rolenum} if rolenum is not None else None
     selected_user = display_objects_table(display_user_fields, "user", selection=True, filters=filters)
     if selected_user is None:
@@ -67,7 +67,7 @@ def update_user(user, rolenum=None): # Done
     clear_screen()
 
 
-def delete_user(user, rolenum=None): # Done
+def delete_user(user, rolenum=None):
     filters = {"user_role": rolenum} if rolenum is not None else None
     user_to_delete = display_objects_table(
         display_user_fields, "user", selection=True, filters=filters)
@@ -88,7 +88,7 @@ def delete_user(user, rolenum=None): # Done
     wait(2)
 
 
-def reset_password(user, rolenum=None): # Done
+def reset_password(user, rolenum=None):
     filters = {"user_role": rolenum} if rolenum is not None else None
     user_to_reset = display_objects_table(
         display_user_fields, "user", selection=True, filters=filters)
@@ -114,5 +114,5 @@ def reset_password(user, rolenum=None): # Done
         wait(2)
 
 
-def show_all_users(): # Done
+def show_all_users():
     display_objects_table(display_user_fields, "user", selection=False, only_display=True)

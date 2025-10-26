@@ -3,18 +3,16 @@ import bcrypt
 from Utils.encryption import encryptor
 
 def create_database():
-    # SQLite database file name
     db_file = "ScooterApp.db"
 
-    # Connect to SQLite database (it will be created if it doesn't exist)
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
 
-    # Predefined list of cities
     CITIES = [
         "Rotterdam", "Amsterdam", "Utrecht", "Eindhoven", "Groningen",
         "Maastricht", "Delft", "Leiden", "Nijmegen", "Haarlem"
     ]
+
     cursor.execute("DROP TABLE IF EXISTS Scooters;")
     cursor.execute("DROP TABLE IF EXISTS Travellers;")
     cursor.execute("DROP TABLE IF EXISTS Users;")
@@ -146,17 +144,16 @@ def seed_scooters():
 
 
 def seed_users():
-    # Define passwords in plain text first
     plain_passwords = [
         "Admin_123?",
-        "SysPass1!",
-        "SysPass2!",
-        "SysPass3!",
-        "SysPass4!",
-        "EngPass1!",
-        "EngPass2!",
-        "EngPass3!",
-        "EngPass4!"
+        "SysPassword1!",
+        "SysPassword2!",
+        "SysPassword3!",
+        "SysPassword4!",
+        "EngPassword1!",
+        "EngPassword2!",
+        "EngPassword3!",
+        "EngPassword4!"
     ]
     
     # Hash all passwords
@@ -171,16 +168,16 @@ def seed_users():
         (encryptor.encrypt_data("super_admin"), hashed_passwords[0], None, None, 0, None),
 
         # System Admins (role 1)
-        (encryptor.encrypt_data("sysadmin1"), hashed_passwords[1], encryptor.encrypt_data("Max"), encryptor.encrypt_data("Verstappen"), 1, "2024-06-01"),
-        (encryptor.encrypt_data("sysadmin2"), hashed_passwords[2], encryptor.encrypt_data("Oscar"), encryptor.encrypt_data("Piastri"), 1, "2024-06-02"),
-        (encryptor.encrypt_data("sysadmin3"), hashed_passwords[3], encryptor.encrypt_data("Lando"), encryptor.encrypt_data("Norris"), 1, "2024-06-02"),
-        (encryptor.encrypt_data("sysadmin4"), hashed_passwords[4], encryptor.encrypt_data("George"), encryptor.encrypt_data("Russell"), 1, "2024-06-02"),
+        (encryptor.encrypt_data("sysadmin1"), hashed_passwords[1], encryptor.encrypt_data("Max"), encryptor.encrypt_data("Verstappen"), 1, "2024-06-02"),
+        (encryptor.encrypt_data("sysadmin2"), hashed_passwords[2], encryptor.encrypt_data("Oscar"), encryptor.encrypt_data("Piastri"), 1, "2024-06-03"),
+        (encryptor.encrypt_data("sysadmin3"), hashed_passwords[3], encryptor.encrypt_data("Lando"), encryptor.encrypt_data("Norris"), 1, "2024-06-04"),
+        (encryptor.encrypt_data("sysadmin4"), hashed_passwords[4], encryptor.encrypt_data("George"), encryptor.encrypt_data("Russell"), 1, "2024-06-05"),
 
         # Service Engineers (role 2)
-        (encryptor.encrypt_data("engineer1"), hashed_passwords[5], encryptor.encrypt_data("Charles"), encryptor.encrypt_data("Leclerc"), 2, "2024-06-03"),
-        (encryptor.encrypt_data("engineer2"), hashed_passwords[6], encryptor.encrypt_data("Carlos"), encryptor.encrypt_data("Sainz"), 2, "2024-06-04"),
-        (encryptor.encrypt_data("engineer3"), hashed_passwords[7], encryptor.encrypt_data("Lewis"), encryptor.encrypt_data("Hamilton"), 2, "2024-06-05"),
-        (encryptor.encrypt_data("engineer4"), hashed_passwords[8], encryptor.encrypt_data("Fernando"), encryptor.encrypt_data("Alonso"), 2, "2024-06-06"),
+        (encryptor.encrypt_data("engineer1"), hashed_passwords[5], encryptor.encrypt_data("Charles"), encryptor.encrypt_data("Leclerc"), 2, "2024-06-06"),
+        (encryptor.encrypt_data("engineer2"), hashed_passwords[6], encryptor.encrypt_data("Carlos"), encryptor.encrypt_data("Sainz"), 2, "2024-06-07"),
+        (encryptor.encrypt_data("engineer3"), hashed_passwords[7], encryptor.encrypt_data("Lewis"), encryptor.encrypt_data("Hamilton"), 2, "2024-06-08"),
+        (encryptor.encrypt_data("engineer4"), hashed_passwords[8], encryptor.encrypt_data("Fernando"), encryptor.encrypt_data("Alonso"), 2, "2024-06-09"),
     ]
     
     query = """
@@ -254,17 +251,6 @@ def seed_travellers():
     """
     dbconnect(query, travellers)
     print("Travellers table seeded successfully.")
-
-
-def empty_table(table_name):
-    db_file = "ScooterApp.db"
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
-    cursor.execute(f"DELETE FROM {table_name};")
-    conn.commit()
-    cursor.close()
-    conn.close()
-    print(f"Table '{table_name}' emptied successfully.")
 
 
 if __name__ == "__main__":

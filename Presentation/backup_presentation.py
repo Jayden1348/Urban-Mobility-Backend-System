@@ -3,14 +3,15 @@ from Logic import backup_logic, logs_logic, account_logic
 from Presentation.users_presentation import display_user_fields
 import pyperclip
 import getpass
+
 display_restore_code_fields = ["code_id", "generated_for_user_id", "backup_filename"]
 
 
-def search_restore_codes(): # Done
+def search_restore_codes():
     display_objects_table(display_restore_code_fields, "restore code", selection=False)
 
 
-def add_restore_code(user): # Done
+def add_restore_code(user):
     clear_screen()
     input("Choose a user to generate a restore code for, and a backup to restore from.\n\nPress Enter to continue...")
     code_user = display_objects_table(display_user_fields, "user", selection=True, filters={"user_role": 1})
@@ -43,7 +44,7 @@ def add_restore_code(user): # Done
     input("\nPress Enter to continue...")
 
 
-def revoke_restore_code(user):  # Done
+def revoke_restore_code(user):
     chosen_restore_code = display_objects_table(display_restore_code_fields, "restore code", selection=True)
     if chosen_restore_code is None:
         return
@@ -63,7 +64,7 @@ def revoke_restore_code(user):  # Done
 
 
 # Backup functions
-def make_backup(user):  # Done
+def make_backup(user):
     clear_screen()
     success, filename = backup_logic.create_backup()
     if success:
@@ -76,7 +77,7 @@ def make_backup(user):  # Done
     wait(3)
 
 
-def restore_backup(user):   # Done
+def restore_backup(user):
 
     backup_filename, restore_code_obj = select_backup_to_restore(user)
     if backup_filename is None:
@@ -100,7 +101,7 @@ def restore_backup(user):   # Done
     input("\nPress Enter to continue...")
 
 
-def select_backup_to_restore(user): # Done
+def select_backup_to_restore(user):
     user_role = account_logic.get_role_num(user.user_role)
     if user_role == 0:
         get_all_backups = backup_logic.get_all_backup_names()

@@ -1,6 +1,7 @@
 from Access import LogAccess
 from datetime import datetime
 from Models.DataModels import Log
+import os
 
 
 def get_log(filters):
@@ -16,6 +17,7 @@ def get_log(filters):
 
 
 def new_log(username, description, additionalinfo, suspicious=0):
+    os.makedirs("Logs", exist_ok=True)
     now = datetime.now()
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%H:%M:%S")

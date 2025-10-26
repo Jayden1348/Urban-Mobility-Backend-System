@@ -22,7 +22,7 @@ def search_item_in_table(table_name, search_value, identifiers=None, filters=Non
         params = []
         encrypted_filters = {}
         
-        # Check if ANY identifier is encrypted
+        # Check if ANY identifier is encrypted 
         has_encrypted_identifiers = False
         if identifiers:
             for field in identifiers:

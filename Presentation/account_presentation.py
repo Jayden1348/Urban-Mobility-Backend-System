@@ -6,7 +6,7 @@ user_fields = ["username", "first_name", "last_name"]
 
 
 
-def update_account(user):   # Done
+def update_account(user):
     old_userprofile = copy.deepcopy(user)
     changes = get_object_values(user_fields, "user", old_object=old_userprofile)
 
@@ -32,7 +32,7 @@ def update_account(user):   # Done
     wait(2)
 
 
-def update_password(user):  # Done
+def update_password(user):
     if not identity_verification(user):
         return
     
@@ -69,7 +69,7 @@ def update_password(user):  # Done
     wait(2)
 
 
-def delete_account(user):   # Done
+def delete_account(user):
     warning = f"⚠️  DELETE ACCOUNT⚠️\nTHIS ACTION CANNOT BE UNDONE!\n\n"
     
     if not identity_verification(user, warning):
@@ -108,7 +108,7 @@ LOGIN_COOLDOWN_SECONDS = 60
 TOTAL_FAILED_ATTEMPTS = 0
 MAX_ATTEMPTS = 5
 
-def identity_verification(user=None, extra_message=""): # Done
+def identity_verification(user=None, extra_message=""):
     global LOGIN_COOLDOWN, TOTAL_FAILED_ATTEMPTS
     
     if LOGIN_COOLDOWN > 0:

@@ -14,12 +14,12 @@ change_scooter_fields = ["brand", "model", "serial_number", "top_speed", "batter
 display_scooter_fields = ["scooter_id"] + change_scooter_fields + ["in_service_date"]
 
 
-def search_scooter():  # Done
+def search_scooter():
     display_objects_table(
         display_scooter_fields, "scooter", selection=False, unit_map=unit_map)
 
 
-def add_scooter(user):  # Done
+def add_scooter(user):
     new_scooter_dict = get_object_values(
         change_scooter_fields, "scooter", unit_map=unit_map)
 
@@ -39,7 +39,7 @@ def add_scooter(user):  # Done
         wait(2)
 
 
-def update_scooter(user):   # Done
+def update_scooter(user):
     scooter = display_objects_table(
         display_scooter_fields, "scooter", selection=True, unit_map=unit_map)
     if scooter is None:
@@ -74,7 +74,7 @@ def update_scooter(user):   # Done
     clear_screen()
 
 
-def delete_scooter(user):  # Done
+def delete_scooter(user):
     scooter_to_delete = display_objects_table(
         display_scooter_fields, "scooter", selection=True, unit_map=unit_map)
     if scooter_to_delete is None:
@@ -94,7 +94,7 @@ def delete_scooter(user):  # Done
     wait(2)
 
 
-def advanced_scooter_search():  # Done
+def advanced_scooter_search():
     input("Advanced Search\n\nAdvanced Search lets you enter values to search for objects with matching fields.\nFor example, when you searching for all scooters that are out of service, enter 'Yes' for the 'out of service' field.\n\nPress Enter to continue...")
 
     empty_scooter = general_logic.get_class("scooter")

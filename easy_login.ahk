@@ -6,7 +6,7 @@ Numpad1::{
 	Send "{Enter}"
 	SendText "engineer1"
 	Send "{Enter}"
-	SendText "EngPass1!"
+	SendText "EngPassword1!"
 	Send "{Enter}"
 }
 
@@ -15,7 +15,7 @@ Numpad2::{
 	Send "{Enter}"
 	SendText "sysadmin1"
 	Send "{Enter}"
-	SendText "SysPass1!"
+	SendText "SysPassword1!"
 	Send "{Enter}"
 }
 

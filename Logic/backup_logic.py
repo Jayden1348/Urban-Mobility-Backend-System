@@ -4,22 +4,22 @@ from Utils.encryption import encryptor
 import zipfile
 import os
 
-def get_restore_code(search_key="", identifiers=None, filters=None):    # Done
+def get_restore_code(search_key="", identifiers=None, filters=None):
     if identifiers is None:
         identifiers = ["code_id", "generated_for_user_id", "backup_filename"]
     return DataAccess.search_item_in_table(
         "RestoreCodes", search_key, identifiers=identifiers, filters=filters)
 
 
-def add_restore_code(new_restore_code_data):   # Done
+def add_restore_code(new_restore_code_data):
     return DataAccess.add_item_to_table("RestoreCodes", encryptor.encrypt_object_data("RestoreCodes", new_restore_code_data))
 
 
-def delete_restore_code(restore_code_entry):    # Done
+def delete_restore_code(restore_code_entry):
     return DataAccess.remove_item_from_table("RestoreCodes", restore_code_entry.code_id)
 
 
-def validate_new_restore_code_values(user_id, backup_filename):  # Done
+def validate_new_restore_code_values(user_id, backup_filename):
     existing_code = get_restore_code(identifiers=[],
         filters={"generated_for_user_id": user_id, "backup_filename": backup_filename})
     return len(existing_code) > 0
@@ -27,7 +27,7 @@ def validate_new_restore_code_values(user_id, backup_filename):  # Done
 
 
 ## Backup functions
-def create_backup():    # Done
+def create_backup():
     backup_dir = "System Backups"
     os.makedirs(backup_dir, exist_ok=True)
     
@@ -48,7 +48,7 @@ def create_backup():    # Done
     files_to_backup = [
         "ScooterApp.db",
         "encryption.key",
-        "Program.py",
+        "um_members.py",
         "databasechange.py",
     ]
     
@@ -72,7 +72,7 @@ def create_backup():    # Done
         return False, str(e)
 
 
-def restore_backup(backup_filename, restore_code_obj):   # Done
+def restore_backup(backup_filename, restore_code_obj):
     backup_dir = "System Backups"
     src = os.path.join(backup_dir, backup_filename)
     
@@ -112,7 +112,7 @@ def restore_backup(backup_filename, restore_code_obj):   # Done
         return False, f"Restore failed: {str(e)}"
 
 
-def get_all_backup_names():  # Done
+def get_all_backup_names():
     backup_dir = "System Backups"
     if not os.path.exists(backup_dir):
         return []

@@ -1,12 +1,12 @@
 from .general_presentation import *
 from .nested_menus import *
-from . import logs_presentation, users_presentation
+from . import users_presentation
 from .scooter_presentation import *
 
 
 def super_admin_menu(user):
     while True:
-        print("Main Menu (Super Admin)\n")
+        print(f"Main Menu ({user.username})\n")
         print("1. Scooter functions")
         print("2. Traveller functions")
         print("3. Service engineer functions")
@@ -19,25 +19,25 @@ def super_admin_menu(user):
         clear_screen()
 
         if choice == "1":
-            scooter_functions(user)                 # Done
+            scooter_functions(user)
 
         elif choice == "2":
-            traveller_functions(user)               # Done 
+            traveller_functions(user)
 
         elif choice == "3":
-            user_functions(user, 2)                 # Done
+            user_functions(user, 2)
 
         elif choice == "4":
-            user_functions(user, 1)                 # Done
+            user_functions(user, 1)
 
         elif choice == "5":
             system_backup_functions(user)
 
         elif choice == "6":
-            logs_presentation.show_all_logs()       # Done
+            log_functions()
 
         elif choice == "7":
-            users_presentation.show_all_users()     # Done
+            users_presentation.show_all_users()
 
         elif choice == "8" or choice == "b":
             if boolean_confirmation("log out"):
@@ -50,7 +50,7 @@ def super_admin_menu(user):
 
 def system_admin_menu(user):
     while True:
-        print("Main Menu (System Admin)\n")
+        print(f"Main Menu ({user.username})\n")
         print("1. Scooter functions")
         print("2. Traveller functions")
         print("3. Service engineer functions")
@@ -63,24 +63,25 @@ def system_admin_menu(user):
         clear_screen()
 
         if choice == "1":
-            scooter_functions(user)                 # Done
+            scooter_functions(user)
 
         elif choice == "2":
-            traveller_functions(user)               # Done
+            traveller_functions(user)
 
         elif choice == "3":
-            user_functions(user, 2)                 # Done
+            user_functions(user, 2)
 
         elif choice == "4":
             system_backup_functions(user)
 
         elif choice == "5":
-            logs_presentation.show_all_logs()       # Done
+            log_functions()
+
         elif choice == "6":
-            users_presentation.show_all_users()     # Done
+            users_presentation.show_all_users()
 
         elif choice == "7":
-            if account_functions(user) == "LogOut": # Done
+            if account_functions(user) == "LogOut":
                 return
         elif choice == "8" or choice == "b":
             if boolean_confirmation("log out"):
@@ -91,9 +92,9 @@ def system_admin_menu(user):
             clear_screen()
 
 
-def service_engineer_menu(user):  # Done
+def service_engineer_menu(user):
     while True:
-        print(f"Main Menu (Service Engineer)\n")
+        print(f"Main Menu ({user.username})\n")
         print("1. Search scooter info")
         print("2. Advanced scooter search")
         print("3. Update scooter info")
@@ -104,10 +105,13 @@ def service_engineer_menu(user):  # Done
 
         if choice == "1":
             scooter_presentation.search_scooter()
+
         elif choice == "2":
             scooter_presentation.advanced_scooter_search()
+
         elif choice == "3":
             scooter_presentation.update_scooter(user)
+            
         elif choice == "4":
             if account_functions(user) == "LogOut":
                 return

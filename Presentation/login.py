@@ -1,9 +1,14 @@
 from .general_presentation import *
 from Logic import logs_logic, account_logic
 from .menus import *
+import os
 
 
-def start():    # Done
+def start():
+    if not os.path.exists('ScooterApp.db'):
+        print("\n❌ Database file missing. Cannot perform operations.\n")
+        return
+    
     while True:
         clear_screen()
         print("Welcome to the Urban Mobility System\n")
@@ -29,7 +34,12 @@ def start():    # Done
                 else:
                     print("Unknown role!")
                     wait(2)
-            
+
+                if user_role in (0, 1, 2):
+                    logs_logic.new_log(user.username, "Logged out", None, 0)
+                    print(f"Goodbye {user.username}!")
+                    wait(1.5)
+
         elif choice in ("2", "e"):
             print("Goodbye!")
             break

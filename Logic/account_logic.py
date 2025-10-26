@@ -35,20 +35,20 @@ def get_role_num(role_str):
 
 
 # Password functions
-def verify_password(stored_hash, entered_password):         # Done
+def verify_password(stored_hash, entered_password):
     password_bytes = entered_password.encode('utf-8')
     hashed_bytes = stored_hash.encode('utf-8')
     return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 
-def verify_password_username(username, entered_password):   # Done
+def verify_password_username(username, entered_password):
     user = user_logic.get_user(identifiers=[], filters={"username": username})
     if user:
         return user[0], verify_password(user[0].password, entered_password)
     return None, False
 
 
-def validate_new_password(new_password, old_password):      # Done
+def validate_new_password(new_password, old_password):
     
     errors = []
 
@@ -92,14 +92,14 @@ def validate_new_password(new_password, old_password):      # Done
     return True, "Password meets all requirements"
 
 
-def hash_password(password):                                # Done
+def hash_password(password):
     password_bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(password_bytes, salt)
     return hashed.decode('utf-8')
 
 
-def generate_password(length=16):                           # Done
+def generate_password(length=16):
     specials = "~!@#$%&_-+=`|\\(){}[]:;'<>,.?/"
 
     if length < 12:

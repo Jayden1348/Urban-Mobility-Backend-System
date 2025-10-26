@@ -1,8 +1,8 @@
 from .general_presentation import *
-from . import account_presentation, backup_presentation, users_presentation, scooter_presentation, traveller_presentation
+from . import account_presentation, backup_presentation, users_presentation, scooter_presentation, traveller_presentation, logs_presentation
 from Logic import account_logic
 
-def scooter_functions(user):            # Accessible by SuperAdmin & SystemAdmin        # Done
+def scooter_functions(user):
     while True:
         clear_screen()
         print("Scooter functions:\n")
@@ -32,7 +32,7 @@ def scooter_functions(user):            # Accessible by SuperAdmin & SystemAdmin
             wait(1.5)
 
 
-def traveller_functions(user):          # Accessible by SuperAdmin & SystemAdmin        # Done
+def traveller_functions(user):
     while True:
         clear_screen()
         print("Traveller functions:\n")
@@ -62,7 +62,7 @@ def traveller_functions(user):          # Accessible by SuperAdmin & SystemAdmin
             wait(1.5)
 
 
-def user_functions(user, role_num):   # Accessible by SuperAdmin & SystemAdmin          # Done
+def user_functions(user, role_num):
     if role_num == 1:
         role_name = "System Admin"
     elif role_num == 2:
@@ -97,7 +97,6 @@ def user_functions(user, role_num):   # Accessible by SuperAdmin & SystemAdmin  
             print("\nInvalid option. Please try again.")
 
 
-# Accessible by SuperAdmin & SystemAdmin, but some functions are accessible only by SuperAdmin
 def system_backup_functions(user):
     role = account_logic.get_role_num(user.user_role)
     while True:
@@ -153,7 +152,7 @@ def system_backup_functions(user):
             return
 
 
-def account_functions(user):        #  Accessible by SystemAdmin & Service Engineer     # Done
+def account_functions(user):
     while True:
         clear_screen()
         print("Account functions:\n")
@@ -171,6 +170,30 @@ def account_functions(user):        #  Accessible by SystemAdmin & Service Engin
         elif choice == "3":
             if account_presentation.delete_account(user) == "LogOut":
                 return "LogOut"
+        elif choice == "4" or choice == "b":
+            return
+        else:
+            print("\nInvalid option. Please try again.")
+            wait(1.5)
+
+
+def log_functions():
+    while True:
+        clear_screen()
+        print("Check logs")
+        print("1. Search all logs")
+        print("2. Search individual user logs")
+        print("3. Search suspicious logs")
+        print("4. Go back")
+        choice = input("\nSelect an option (1-4): ").strip().lower()
+        clear_screen()
+
+        if choice == "1":
+            logs_presentation.show_all_logs()
+        elif choice == "2":
+            logs_presentation.show_user_logs()
+        elif choice == "3":
+            logs_presentation.show_sus_logs()
         elif choice == "4" or choice == "b":
             return
         else:

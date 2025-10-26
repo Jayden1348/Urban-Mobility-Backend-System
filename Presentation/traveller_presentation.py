@@ -6,11 +6,11 @@ change_traveller_fields = ["first_name", "last_name", "date_of_birth", "gender",
 display_traveller_fields = ["customer_id"] + change_traveller_fields + ["registration_date"]
 
 
-def search_traveller():  # Done
+def search_traveller():
     display_objects_table(display_traveller_fields, "traveller", selection=False)
 
 
-def add_traveller(user):    # Done
+def add_traveller(user):
     new_traveller_dict = get_object_values(
         change_traveller_fields, "traveller")
 
@@ -30,7 +30,7 @@ def add_traveller(user):    # Done
         wait(2)
 
 
-def update_traveller(user):  # Done
+def update_traveller(user):
     traveller = display_objects_table(
         display_traveller_fields, "traveller", selection=True)
     if traveller is None:
@@ -59,7 +59,7 @@ def update_traveller(user):  # Done
     clear_screen()
 
 
-def delete_traveller(user):  # Done
+def delete_traveller(user):
     traveller_to_delete = display_objects_table(
         display_traveller_fields, "traveller", selection=True)
     if traveller_to_delete is None:
@@ -79,7 +79,7 @@ def delete_traveller(user):  # Done
     wait(2)
 
 
-def advanced_traveller_search():    # Done
+def advanced_traveller_search():
     input("Advanced Search\n\nAdvanced Search lets you enter values to search for objects with matching fields.\nFor example, when you searching for all travellers living in Rotterdam, enter 'Rotterdam' for the 'city' field.\n\nPress Enter to continue...")
 
     empty_traveller = general_logic.get_class("traveller")

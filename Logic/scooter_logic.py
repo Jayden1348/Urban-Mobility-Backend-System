@@ -12,14 +12,14 @@ CITY_AREA = "Rotterdam"
 
 
 
-def get_scooter(search_key="", identifiers=None, filters=None):  # Done
+def get_scooter(search_key="", identifiers=None, filters=None):
     if identifiers is None:
         identifiers = ["scooter_id", "serial_number", "brand", "model"]
     return DataAccess.search_item_in_table(
         "Scooters", search_key, identifiers=identifiers, filters=filters)
 
 
-def add_scooter(new_scooter_data):  # Done
+def add_scooter(new_scooter_data):
     if "out_of_service" in new_scooter_data:
         new_scooter_data["out_of_service"] = 1 if new_scooter_data["out_of_service"] == "Yes" else 0
     if "target_range_soc" in new_scooter_data:
@@ -33,7 +33,7 @@ def add_scooter(new_scooter_data):  # Done
     return DataAccess.add_item_to_table("Scooters", encryptor.encrypt_object_data("Scooters", new_scooter_data))
 
 
-def update_scooter(scooter_id, updated_scooter_data):  # Done
+def update_scooter(scooter_id, updated_scooter_data):
     if "out_of_service" in updated_scooter_data:
         updated_scooter_data["out_of_service"] = 1 if updated_scooter_data["out_of_service"] == "Yes" else 0
     if "target_range_soc" in updated_scooter_data:
@@ -46,12 +46,12 @@ def update_scooter(scooter_id, updated_scooter_data):  # Done
     return DataAccess.update_item_from_table("Scooters", scooter_id, encryptor.encrypt_object_data("Scooters", updated_scooter_data))
 
 
-def delete_scooter(scooter_id):  # Done
+def delete_scooter(scooter_id):
     return DataAccess.remove_item_from_table("Scooters", scooter_id)
 
 
 # Validation for new scooter values
-def validate_new_scooter_values(field, v):  # Done
+def validate_new_scooter_values(field, v):
     if field in ["brand", "model"]:
         if len(v) <= 20:
             if general_logic.validate_char_string(v, letters=True, numbers=True, others=" -+.&"):
