@@ -124,7 +124,7 @@ def system_backup_functions(user):
             elif choice == "5":
                 backup_presentation.revoke_restore_code(user)
             elif choice == "6":
-                backup_presentation.cleanup_restore_codes()
+                backup_presentation.cleanup_restore_codes(user)
             elif choice == "7" or choice == "b":
                 clear_screen()
                 return

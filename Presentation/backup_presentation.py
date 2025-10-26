@@ -149,11 +149,13 @@ def select_backup_to_restore(user): # Done
             wait(2)
 
 
-def cleanup_restore_codes():
+def cleanup_restore_codes(user):
     num_of_removed = backup_logic.cleanup_restore_code_table()
     clear_screen()
-    if num_of_removed > 0:
-        print(f"Cleanup complete. Removed {num_of_removed} obsolete restore codes.")
-    else:
+    if num_of_removed == 0:
         print("Cleanup complete. No obsolete restore codes found.")
+    else:
+        print(f"Cleanup complete. Removed {num_of_removed} obsolete restore codes.")
+        logs_logic.new_log(user.username, "Cleaned restore codes",
+                           f"The restore codes have been cleaned. {num_of_removed} codes have been removed.", 0)
     wait(3)
