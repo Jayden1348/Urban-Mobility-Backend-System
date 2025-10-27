@@ -29,6 +29,10 @@ def read_encrypted_logs_csv(logfile=os.path.join("Logs", "logs.enc")):
                 encrypted_line = line.strip()
                 if encrypted_line: 
                     decrypted = encryptor.decrypt_data(encrypted_line)
+
+                    if decrypted == encrypted_line:
+                        raise ValueError("Decryption failed or data corrupted")
+
                     reader = csv.reader([decrypted])
                     for row in reader:
                         if row:
