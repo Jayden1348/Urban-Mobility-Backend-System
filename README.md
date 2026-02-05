@@ -41,7 +41,7 @@ python -m venv .venv
 2. Run the application (CLI entry):
 
 ```powershell
-python Presentation\login.py
+python um_members.py
 ```
 
 
